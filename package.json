@@ -1,0 +1,76 @@
+{
+    "name": "sl",
+    "version": "1.0.0",
+    "main": "src/index.ts",
+    "repository": "git@gitlab.com:didehvar/sl.git",
+    "author": "James Didehvar <james@didehvar.com>",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/dotenv": "^4.0.0",
+        "@types/http-errors": "^1.5.34",
+        "@types/jest": "20.0.1",
+        "@types/jsonwebtoken": "^7.2.1",
+        "@types/knex": "0.0.54",
+        "@types/koa": "^2.0.39",
+        "@types/koa-bodyparser": "^3.0.23",
+        "@types/koa-jwt": "^3.2.0",
+        "@types/koa-router": "^7.0.22",
+        "@types/nock": "^8.2.1",
+        "@types/node": "8.0.1",
+        "@types/node-fetch": "^1.6.7",
+        "@types/pg": "^6.1.41",
+        "@types/supertest": "^2.0.0",
+        "@types/winston": "^2.3.3",
+        "dotenv": "^4.0.0",
+        "husky": "^0.13.4",
+        "jest": "^20.0.4",
+        "lint-staged": "^4.0.0",
+        "nock": "^9.0.13",
+        "nodemon": "^1.11.0",
+        "prettier": "^1.4.4",
+        "supertest": "^3.0.0",
+        "ts-jest": "^20.0.6",
+        "ts-node": "^3.0.6",
+        "typescript": "^2.4.0"
+    },
+    "dependencies": {
+        "http-errors": "^1.6.1",
+        "jsonwebtoken": "^7.4.1",
+        "knex": "^0.13.0",
+        "koa": "^2.2.0",
+        "koa-bodyparser": "^4.2.0",
+        "koa-jwt": "^3.2.2",
+        "koa-router": "^7.2.0",
+        "node-fetch": "^1.7.1",
+        "objection": "^0.8.2",
+        "pg": "^6.2.3",
+        "winston": "^2.3.1"
+    },
+    "scripts": {
+        "start": "nodemon -x ts-node -r dotenv/config ./src/index.ts",
+        "precommit": "lint-staged",
+        "test": "jest"
+    },
+    "lint-staged": {
+        "*.ts": [
+            "prettier --write --single-quote --trailing-comma all",
+            "git add"
+        ]
+    },
+    "jest": {
+        "transform": {
+            ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+        },
+        "testRegex": "/__tests__/.*\\.test.(ts|tsx|js)$",
+        "moduleFileExtensions": [
+            "ts",
+            "tsx",
+            "js",
+            "json"
+        ],
+        "modulePaths": [
+            "<rootDir>/src"
+        ],
+        "setupTestFrameworkScriptFile": "<rootDir>/__tests__/setup.ts"
+    }
+}
