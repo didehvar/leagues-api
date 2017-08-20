@@ -2,7 +2,7 @@ import { Model } from 'objection';
 import { sign, Secret } from 'jsonwebtoken';
 
 export default class User extends Model {
-  public static tableName = 'User';
+  public static tableName = 'users';
 
   public readonly id: number;
   public email: string;
