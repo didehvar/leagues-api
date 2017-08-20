@@ -8,3 +8,5 @@ const knex = Knex({
 });
 
 Model.knex(knex);
+
+export default knex;

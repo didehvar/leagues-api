@@ -1,38 +1,31 @@
 import { Model } from 'objection';
-import { sign } from 'jsonwebtoken';
-
-import StravaUser from './strava-user';
+import { sign, Secret } from 'jsonwebtoken';
 
 export default class User extends Model {
   public static tableName = 'User';
 
   public readonly id: number;
   public email: string;
+  public readonly stravaId: number;
+  public stravaAccessToken: string;
+  public stravaRaw: string;
 
   public jwtToken() {
-    return sign({ email: this.email }, process.env.JWT_SECRET, {
+    return sign({ email: this.email }, <Secret>process.env.JWT_SECRET, {
       expiresIn: '15m',
     });
   }
 
   public static jsonSchema = {
     type: 'object',
-    required: ['username', 'email'],
+    required: ['id', 'email', 'stravaId'],
 
     properties: {
       id: { type: 'integer' },
       email: { type: 'string', minLength: 1, maxLength: 254 },
-    },
-  };
-
-  public static relationMappings = {
-    stravaUsers: {
-      relation: Model.HasOneRelation,
-      modelClass: StravaUser,
-      join: {
-        from: 'users.id',
-        to: 'strava_users.user_id',
-      },
+      stravaId: { type: 'number' },
+      stravaAccessToken: { type: 'string' },
+      stravaRaw: { type: 'string' },
     },
   };
 }

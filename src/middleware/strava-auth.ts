@@ -3,7 +3,6 @@ import fetch from 'node-fetch';
 
 import log from '../log';
 import User from '../models/user';
-import StravaUser from '../models/strava-user';
 
 export const exchange: Middleware = async ctx => {
   const { code } = ctx.request.body;
@@ -34,24 +33,17 @@ export const exchange: Middleware = async ctx => {
     return ctx.throw(401, 'Invalid Strava code');
   }
 
-  const stravaUser = (await StravaUser.query().where('id', athlete.id))[0];
-  let user: User;
+  let user = (await User.query().where('stravaId', athlete.id))[0];
 
-  if (stravaUser) {
-    user = (await User.query().where('id', stravaUser.userId))[0];
-  } else {
+  if (!user) {
     user = await User.query()
       .insert({
         email: athlete.email,
+        stravaId: athlete.id,
+        stravaAccessToken: accessToken,
+        stravaRaw: JSON.stringify(athlete),
       })
       .returning('*');
-
-    await user.$relatedQuery<StravaUser>('stravaUsers').insert({
-      athleteId: athlete.id,
-      accessToken,
-      raw: JSON.stringify(athlete),
-      userId: user.id,
-    });
   }
 
   ctx.body = { token: user.jwtToken() };
