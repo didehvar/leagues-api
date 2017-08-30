@@ -7,6 +7,7 @@ export default class League extends Model {
   public name: string;
   public slug: string;
   public start_date: Date;
+  public country_code: string;
   public discipline_id: number;
   public created_at: string;
   public updated_at: string;
@@ -20,6 +21,7 @@ export default class League extends Model {
       name: { type: 'string' },
       slug: { type: 'string' },
       start_date: { type: 'string' },
+      country_code: { type: 'string', max: 2 },
     },
   };
 

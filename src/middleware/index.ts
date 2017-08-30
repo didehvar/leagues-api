@@ -7,7 +7,7 @@ import { exchange } from './strava-auth';
 import handleErrors from './handle-errors';
 import responseTime from './response-time';
 import { userList } from './users';
-import { leagueList, createLeague } from './leagues';
+import { getLeague, leagueList, createLeague } from './leagues';
 
 export default function(app: Koa) {
   const router = new Router();
@@ -23,6 +23,8 @@ export default function(app: Koa) {
 
   router.get('/leagues', leagueList);
   router.post('/leagues', createLeague);
+  router.get('/leagues/:id', getLeague);
+  router.get('/leagues/:id/:slug', getLeague);
 
   router.post('/auth/strava/exchange', exchange);
 
