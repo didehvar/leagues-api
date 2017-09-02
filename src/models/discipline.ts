@@ -17,7 +17,7 @@ export default class Discipline extends Model {
   };
 
   static relationMappings = {
-    disciplines: {
+    leagues: {
       relation: Model.HasManyRelation,
       modelClass: __dirname + '/league',
       join: {

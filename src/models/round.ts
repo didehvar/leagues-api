@@ -1,37 +1,48 @@
 import { Model } from 'objection';
 
-export default class League extends Model {
-  public static tableName = 'leagues';
+export default class Round extends Model {
+  public static tableName = 'rounds';
 
   public readonly id: number;
   public name: string;
   public slug: string;
   public start_date: Date;
-  public country_code: string;
-  public discipline_id: number;
+  public end_date: Date;
+  public league_id: number;
+  public strava_segment_id: number;
   public created_at: string;
   public updated_at: string;
 
   public static jsonSchema = {
     type: 'object',
-    required: ['name', 'start_date'],
+    required: ['name', 'start_date', 'end_date', 'strava_id'],
 
     properties: {
       id: { type: 'integer' },
       name: { type: 'string' },
       slug: { type: 'string' },
       start_date: { type: 'string' },
-      country_code: { type: 'string', max: 2 },
+      end_date: { type: 'string' },
+      strava_id: { type: 'string' },
+      strava_segment_id: { type: 'string' },
     },
   };
 
   static relationMappings = {
-    discipline: {
+    league: {
       relation: Model.BelongsToOneRelation,
-      modelClass: __dirname + '/discipline',
+      modelClass: __dirname + '/league',
       join: {
-        from: 'leagues.discipline_id',
-        to: 'disciplines.id',
+        from: 'rounds.league_id',
+        to: 'leagues.id',
+      },
+    },
+    segment: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: __dirname + '/segment',
+      join: {
+        from: 'rounds.strava_segment_id',
+        to: 'strava_segments.id',
       },
     },
   };

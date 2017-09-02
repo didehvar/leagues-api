@@ -6,9 +6,9 @@ export default class User extends Model {
 
   public readonly id: number;
   public email: string;
-  public readonly stravaId: number;
-  public stravaAccessToken: string;
-  public stravaRaw: string;
+  public readonly strava_id: number;
+  public strava_access_token: string;
+  public strava_raw: string;
 
   public jwtToken() {
     return sign({ email: this.email }, <Secret>process.env.JWT_SECRET, {
@@ -18,14 +18,14 @@ export default class User extends Model {
 
   public static jsonSchema = {
     type: 'object',
-    required: ['id', 'email', 'stravaId'],
+    required: ['email', 'strava_id'],
 
     properties: {
       id: { type: 'integer' },
       email: { type: 'string', minLength: 1, maxLength: 254 },
-      stravaId: { type: 'number' },
-      stravaAccessToken: { type: 'string' },
-      stravaRaw: { type: 'string' },
+      strava_id: { type: 'number' },
+      strava_access_token: { type: 'string' },
+      strava_raw: { type: 'string' },
     },
   };
 }

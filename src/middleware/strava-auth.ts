@@ -8,6 +8,9 @@ export const exchange: Middleware = async ctx => {
   const { code } = ctx.request.body;
   if (!code) return ctx.throw(400);
 
+  console.log(process.env.STRAVA_CLIENT_ID);
+  console.log(process.env.STRAVA_CLIENT_SECRET);
+
   const res = await fetch('https://www.strava.com/oauth/token', {
     method: 'POST',
     body: JSON.stringify({
@@ -15,6 +18,7 @@ export const exchange: Middleware = async ctx => {
       client_secret: process.env.STRAVA_CLIENT_SECRET,
       code,
     }),
+    headers: { 'Content-Type': 'application/json' },
   });
 
   const {
@@ -33,18 +37,18 @@ export const exchange: Middleware = async ctx => {
     return ctx.throw(401, 'Invalid Strava code');
   }
 
-  let user = (await User.query().where('stravaId', athlete.id))[0];
+  let user = (await User.query().where('strava_id', athlete.id))[0];
 
   if (!user) {
     user = await User.query()
       .insert({
         email: athlete.email,
-        stravaId: athlete.id,
-        stravaAccessToken: accessToken,
-        stravaRaw: JSON.stringify(athlete),
+        strava_id: athlete.id,
+        strava_access_token: accessToken,
+        strava_raw: JSON.stringify(athlete),
       })
       .returning('*');
   }
 
-  ctx.body = { token: user.jwtToken() };
+  ctx.body = { data: { token: user.jwtToken() } };
 };
