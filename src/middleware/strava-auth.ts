@@ -8,9 +8,6 @@ export const exchange: Middleware = async ctx => {
   const { code } = ctx.request.body;
   if (!code) return ctx.throw(400);
 
-  console.log(process.env.STRAVA_CLIENT_ID);
-  console.log(process.env.STRAVA_CLIENT_SECRET);
-
   const res = await fetch('https://www.strava.com/oauth/token', {
     method: 'POST',
     body: JSON.stringify({
@@ -50,5 +47,5 @@ export const exchange: Middleware = async ctx => {
       .returning('*');
   }
 
-  ctx.body = { data: { token: user.jwtToken() } };
+  ctx.body = { data: { id: user.id, token: user.jwtToken() } };
 };
