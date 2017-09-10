@@ -34,7 +34,9 @@ export const exchange: Middleware = async ctx => {
     return ctx.throw(401, 'Invalid Strava code');
   }
 
-  let user = (await User.query().where('strava_id', athlete.id))[0];
+  let user = await User.query()
+    .where('strava_id', athlete.id)
+    .first();
 
   if (!user) {
     user = await User.query()
@@ -45,7 +47,19 @@ export const exchange: Middleware = async ctx => {
         strava_raw: JSON.stringify(athlete),
       })
       .returning('*');
+  } else {
+    user = await User.query().patchAndFetchById(user.id, {
+      strava_access_token: accessToken,
+      strava_raw: JSON.stringify(athlete),
+    });
   }
 
-  ctx.body = { data: { id: user.id, token: user.jwtToken() } };
+  ctx.body = {
+    data: {
+      user: {
+        id: user.id,
+      },
+      token: user.jwtToken(),
+    },
+  };
 };

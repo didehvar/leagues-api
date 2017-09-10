@@ -5,27 +5,19 @@ import fetch from 'node-fetch';
 import log from '../../log';
 
 export const starredSegments: Middleware = async (ctx, next) => {
-  const res = await fetch('https://www.strava.com/oauth/token', {
-    method: 'POST',
-    body: JSON.stringify({}),
-    headers: { 'Content-Type': 'application/json' },
-  });
+  const res = await fetch(
+    `https://www.strava.com/api/v3/segments/starred?access_token=${ctx.state
+      .user.stravaToken}`,
+  );
 
-  const {
-    access_token: accessToken,
-    athlete,
-    errors,
-    message,
-  } = await res.json();
+  const data = await res.json();
 
-  if (!res.ok || !accessToken) {
-    log.warn('Strava token call failed', {
+  if (!res.ok) {
+    log.warn('Strava starred segments call failed', {
       status: res.status,
-      errors,
-      message,
     });
-    return ctx.throw(401, 'Invalid Strava code');
+    return ctx.throw(500, 'Call to Strava failed');
   }
 
-  ctx.body = { success: true };
+  ctx.body = { data };
 };
