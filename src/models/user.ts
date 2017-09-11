@@ -12,7 +12,11 @@ export default class User extends Model {
 
   public jwtToken() {
     return sign(
-      { email: this.email, stravaToken: this.strava_access_token },
+      {
+        id: this.id,
+        email: this.email,
+        stravaToken: this.strava_access_token,
+      },
       <Secret>process.env.JWT_SECRET,
       {
         expiresIn: '15m',

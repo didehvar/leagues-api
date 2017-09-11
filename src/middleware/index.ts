@@ -10,6 +10,7 @@ import responseTime from './response-time';
 import { userList } from './users';
 import { getLeague, leagueList, createLeague } from './leagues';
 import { starredSegments } from './strava/segment-finder';
+import { refreshToken } from './auth';
 
 export default function(app: Koa) {
   const router = new Router();
@@ -31,6 +32,8 @@ export default function(app: Koa) {
   router.post('/auth/strava/exchange', exchange);
 
   router.use(jwt({ secret: <string>process.env.JWT_SECRET }));
+
+  router.get('/auth/token/refresh', refreshToken);
 
   router.get('/users/:id/segments/starred', starredSegments);
 
