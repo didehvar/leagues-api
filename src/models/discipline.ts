@@ -1,6 +1,6 @@
-import { Model } from 'objection';
+import BaseModel from './base-model';
 
-export default class Discipline extends Model {
+export default class Discipline extends BaseModel {
   public static tableName = 'disciplines';
 
   public readonly id: number;
@@ -18,11 +18,11 @@ export default class Discipline extends Model {
 
   static relationMappings = {
     leagues: {
-      relation: Model.HasManyRelation,
+      relation: BaseModel.HasManyRelation,
       modelClass: __dirname + '/league',
       join: {
         from: 'disciplines.id',
-        to: 'leagues.disciplineId',
+        to: 'leagues.discipline_id',
       },
     },
   };

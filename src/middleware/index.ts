@@ -9,6 +9,7 @@ import handleErrors from './handle-errors';
 import responseTime from './response-time';
 import { userList } from './users';
 import { getLeague, leagueList, createLeague } from './leagues';
+import { createRound } from './rounds';
 import { starredSegments } from './strava/segment-finder';
 import { refreshToken } from './auth';
 
@@ -21,13 +22,10 @@ export default function(app: Koa) {
   app.use(handleErrors);
   app.use(responseTime);
 
-  router.get('/', ctx => (ctx.body = 'Hello Slapi'));
-  router.get('/users', userList);
+  router.get('/', ctx => (ctx.body = 'Hello'));
 
   router.get('/leagues', leagueList);
-  router.post('/leagues', createLeague);
   router.get('/leagues/:id', getLeague);
-  router.get('/leagues/:id/:slug', getLeague);
 
   router.post('/auth/strava/exchange', exchange);
 
@@ -36,6 +34,9 @@ export default function(app: Koa) {
   router.get('/auth/token/refresh', refreshToken);
 
   router.get('/users/:id/segments/starred', starredSegments);
+
+  router.post('/leagues', createLeague);
+  router.post('/leagues/:id/rounds', createRound);
 
   app.use(router.routes());
   app.use(router.allowedMethods());

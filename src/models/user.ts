@@ -1,21 +1,21 @@
-import { Model } from 'objection';
+import BaseModel from './base-model';
 import { sign, Secret } from 'jsonwebtoken';
 
-export default class User extends Model {
+export default class User extends BaseModel {
   public static tableName = 'users';
 
   public readonly id: number;
   public email: string;
-  public readonly strava_id: number;
-  public strava_access_token: string;
-  public strava_raw: string;
+  public readonly stravaId: number;
+  public stravaAccessToken: string;
+  public stravaRaw: object;
 
   public jwtToken() {
     return sign(
       {
         id: this.id,
         email: this.email,
-        stravaToken: this.strava_access_token,
+        stravaToken: this.stravaAccessToken,
       },
       <Secret>process.env.JWT_SECRET,
       {
@@ -26,14 +26,14 @@ export default class User extends Model {
 
   public static jsonSchema = {
     type: 'object',
-    required: ['email', 'strava_id'],
+    required: ['email', 'stravaId'],
 
     properties: {
       id: { type: 'integer' },
       email: { type: 'string', minLength: 1, maxLength: 254 },
-      strava_id: { type: 'number' },
-      strava_access_token: { type: 'string' },
-      strava_raw: { type: 'string' },
+      stravaId: { type: 'number' },
+      stravaAccessToken: { type: 'string' },
+      stravaRaw: { type: 'object' },
     },
   };
 }

@@ -1,57 +1,51 @@
-import { Model } from 'objection';
+import BaseModel from './base-model';
 
-export default class League extends Model {
+export default class League extends BaseModel {
   public static tableName = 'leagues';
 
   public readonly id: number;
   public name: string;
   public slug: string;
-  public start_date: Date;
-  public country_code: string;
-  public discipline_id: number;
-  public created_at: string;
-  public updated_at: string;
+  public startDate: Date;
+  public countryCode: string;
+  public disciplineId: number;
+  public createdAt: string;
+  public updatedAt: string;
 
   public static jsonSchema = {
     type: 'object',
-    required: ['name', 'start_date'],
+    required: ['name', 'startDate'],
 
     properties: {
       id: { type: 'integer' },
       name: { type: 'string' },
       slug: { type: 'string' },
-      start_date: { type: 'string' },
-      country_code: { type: 'string', max: 2 },
+      startDate: { type: 'string' },
+      countryCode: { type: 'string', max: 2 },
     },
   };
 
   static relationMappings = {
     discipline: {
-      relation: Model.BelongsToOneRelation,
+      relation: BaseModel.BelongsToOneRelation,
       modelClass: __dirname + '/discipline',
       join: {
         from: 'leagues.discipline_id',
         to: 'disciplines.id',
       },
     },
+    rounds: {
+      relation: BaseModel.HasManyRelation,
+      modelClass: __dirname + '/round',
+      join: {
+        from: 'leagues.id',
+        to: 'rounds.league_id',
+      },
+    },
   };
 
   $beforeInsert() {
-    this.slug = this.name
-      .toString()
-      .toLowerCase()
-      .trim()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/&/g, '-and-')
-      .replace(/[^\w\-]+/g, '')
-      .replace(/\-\-+/g, '-');
-
-    this.created_at = new Date().toISOString();
-  }
-
-  $beforeUpdate() {
-    this.updated_at = new Date().toISOString();
+    super.$beforeInsert();
+    this.slug = this.slugify(this.name);
   }
 }

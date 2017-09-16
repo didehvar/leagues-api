@@ -1,43 +1,35 @@
-import { Model } from 'objection';
+import BaseModel from './base-model';
 
-export default class StravaSegment extends Model {
+export default class StravaSegment extends BaseModel {
   public static tableName = 'strava_segments';
 
   public readonly id: number;
   public name: string;
-  public strava_id: number;
-  public strava_raw: string;
-  public created_at: string;
-  public updated_at: string;
+  public stravaId: number;
+  public stravaRaw: object | string;
+  public createdAt: string;
+  public updatedAt: string;
 
   public static jsonSchema = {
     type: 'object',
-    required: ['name', 'strava_id'],
+    required: ['name', 'stravaId', 'stravaRaw'],
 
     properties: {
       id: { type: 'integer' },
       name: { type: 'string' },
-      strava_id: { type: 'integer' },
-      strava_raw: { type: 'string' },
+      stravaId: { type: 'integer' },
+      stravaRaw: { type: 'object' },
     },
   };
 
   static relationMappings = {
-    league: {
-      relation: Model.HasManyRelation,
-      modelClass: __dirname + '/league',
+    round: {
+      relation: BaseModel.HasManyRelation,
+      modelClass: __dirname + '/round',
       join: {
         from: 'strava_segments.id',
         to: 'rounds.id',
       },
     },
   };
-
-  $beforeInsert() {
-    this.created_at = new Date().toISOString();
-  }
-
-  $beforeUpdate() {
-    this.updated_at = new Date().toISOString();
-  }
 }

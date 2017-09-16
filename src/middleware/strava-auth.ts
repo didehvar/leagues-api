@@ -42,15 +42,15 @@ export const exchange: Middleware = async ctx => {
     user = await User.query()
       .insert({
         email: athlete.email,
-        strava_id: athlete.id,
-        strava_access_token: accessToken,
-        strava_raw: JSON.stringify(athlete),
+        stravaId: athlete.id,
+        stravaAccessToken: accessToken,
+        stravaRaw: athlete,
       })
       .returning('*');
   } else {
     user = await User.query().patchAndFetchById(user.id, {
-      strava_access_token: accessToken,
-      strava_raw: JSON.stringify(athlete),
+      stravaAccessToken: accessToken,
+      stravaRaw: athlete,
     });
   }
 
