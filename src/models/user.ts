@@ -36,4 +36,27 @@ export default class User extends BaseModel {
       stravaRaw: { type: 'object' },
     },
   };
+
+  static relationMappings = {
+    leagues: {
+      relation: BaseModel.HasManyRelation,
+      modelClass: __dirname + '/league',
+      join: {
+        from: 'users.id',
+        to: 'leagues.user_id',
+      },
+    },
+    joinedLeagues: {
+      relation: BaseModel.ManyToManyRelation,
+      modelClass: __dirname + '/league',
+      join: {
+        from: 'users.id',
+        through: {
+          from: 'leagues_participants.user_id',
+          to: 'leagues_participants.leagues_id',
+        },
+        to: 'leagues.id',
+      },
+    },
+  };
 }

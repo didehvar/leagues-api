@@ -29,11 +29,18 @@ export const createLeague: Middleware = async (ctx, next) => {
   if (!dbDiscipline || !dbDiscipline.id)
     throw new createError.UnprocessableEntity('Missing discipline id');
 
+  const league = await League.query().insert({
+    userId: ctx.state.user.id,
+    name,
+    startDate,
+    disciplineId: dbDiscipline.id,
+  });
+
+  await league.$relatedQuery('participants').relate(ctx.state.user.id);
+
   ctx.body = {
-    data: await League.query().insert({
-      name,
-      startDate,
-      disciplineId: dbDiscipline.id,
-    }),
+    data: league,
   };
 };
+
+export const joinLeague: Middleware = async (ctx, next) => {};
