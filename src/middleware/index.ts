@@ -8,13 +8,18 @@ import { exchange } from './strava-auth';
 import handleErrors from './handle-errors';
 import responseTime from './response-time';
 import { userList } from './users';
-import { getLeague, leagueList, createLeague, joinLeague } from './leagues';
+import * as leagues from './leagues';
 import { createRound } from './rounds';
 import { starredSegments } from './strava/segment-finder';
 import { refreshToken } from './auth';
 
 export default function(app: Koa) {
   const router = new Router();
+
+  app.use(async (ctx, next) => {
+    await next();
+    if (ctx.body === undefined) ctx.body = {};
+  });
 
   app.use(cors());
   app.use(bodyParser());
@@ -24,8 +29,8 @@ export default function(app: Koa) {
 
   router.get('/', ctx => (ctx.body = 'Hello'));
 
-  router.get('/leagues', leagueList);
-  router.get('/leagues/:id', getLeague);
+  router.get('/leagues', leagues.list);
+  router.get('/leagues/:id', leagues.get);
 
   router.post('/auth/strava/exchange', exchange);
 
@@ -35,9 +40,10 @@ export default function(app: Koa) {
 
   router.get('/users/:id/segments/starred', starredSegments);
 
-  router.post('/leagues', createLeague);
+  router.post('/leagues', leagues.create);
   router.post('/leagues/:id/rounds', createRound);
-  router.get('/leagues/:id/join', joinLeague);
+  router.get('/leagues/:id/join', leagues.join);
+  router.get('/leagues/:id/leave', leagues.leave);
 
   app.use(router.routes());
   app.use(router.allowedMethods());

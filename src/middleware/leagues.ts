@@ -4,21 +4,21 @@ import * as createError from 'http-errors';
 import League from '../models/league';
 import Discipline from '../models/discipline';
 
-export const getLeague: Middleware = async (ctx, next) => {
+export const get: Middleware = async (ctx, next) => {
   const { id } = ctx.params;
   const league = await League.query().findById(id);
 
+  console.log(league);
   if (!league) throw new createError.NotFound();
 
-  const rounds = await league.$relatedQuery('rounds');
-  ctx.body = { data: { ...league, rounds } };
+  ctx.body = { data: await league.$loadRelated('[rounds, participants]') };
 };
 
-export const leagueList: Middleware = async (ctx, next) => {
+export const list: Middleware = async (ctx, next) => {
   ctx.body = { data: await League.query() };
 };
 
-export const createLeague: Middleware = async (ctx, next) => {
+export const create: Middleware = async (ctx, next) => {
   const { name, startDate, discipline } = ctx.request.body;
 
   const dbDiscipline = await Discipline.query()
@@ -43,4 +43,34 @@ export const createLeague: Middleware = async (ctx, next) => {
   };
 };
 
-export const joinLeague: Middleware = async (ctx, next) => {};
+export const join: Middleware = async (ctx, next) => {
+  const id = ctx.state.user.id;
+  const league = await League.query().findById(ctx.params.id);
+  if (!league) return ctx.throw(404, 'League not found');
+
+  try {
+    await league.$relatedQuery('participants').relate(id);
+  } catch (ex) {
+    if (
+      !ex.constraint ||
+      ex.constraint !== 'leagues_participants_league_id_user_id_unique'
+    ) {
+      throw ex;
+    }
+  }
+
+  ctx.body = { data: { user: { id } } };
+};
+
+export const leave: Middleware = async (ctx, next) => {
+  const id = ctx.state.user.id;
+  const league = await League.query().findById(ctx.params.id);
+  if (!league) return ctx.throw(404, 'League not found');
+
+  const result = await league
+    .$relatedQuery('participants')
+    .unrelate()
+    .where('user_id', id);
+
+  ctx.body = { data: { user: { id } } };
+};
