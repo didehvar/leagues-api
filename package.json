@@ -48,7 +48,7 @@
     "precommit": "lint-staged",
     "knex": "knex",
     "migrate": "knex migrate:latest",
-    "build": "tsc"
+    "postinstall": "tsc"
   },
   "lint-staged": {
     "*.ts": ["prettier --write --single-quote --trailing-comma all", "git add"]
