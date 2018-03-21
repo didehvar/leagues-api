@@ -1,6 +1,6 @@
 import { Middleware } from 'koa';
 
-import User from '../models/User';
+import User from '../models/user';
 
 export const refreshToken: Middleware = async ctx => {
   const user = await User.query().findById(ctx.state.user.id);
