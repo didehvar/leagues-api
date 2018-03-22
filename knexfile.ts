@@ -3,7 +3,7 @@ import 'dotenv/config';
 module.exports = {
   development: {
     client: 'postgresql',
-    connection: process.env.PG_CONNECTION_STRING,
+    connection: process.env.DATABASE_URL,
     migrations: {
       tableName: 'knex_migrations',
     },
