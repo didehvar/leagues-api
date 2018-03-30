@@ -7,6 +7,6 @@ export const refreshToken: Middleware = async ctx => {
   if (!user) return ctx.throw(404, 'User not found');
 
   ctx.body = {
-    token: user.jwtToken(),
+    data: { token: user.jwtToken() },
   };
 };
