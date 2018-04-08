@@ -59,3 +59,17 @@ export const createRound: Middleware = async (ctx, next) => {
       .returning('*'),
   };
 };
+
+export const deleteRound: Middleware = async (ctx, next) => {
+  const { id, roundId } = ctx.params;
+
+  const league = await League.query().findById(id);
+  if (!league) throw new createError.UnprocessableEntity('League not found');
+
+  ctx.body = {
+    data: await league
+      .$relatedQuery('rounds')
+      .deleteById(roundId)
+      .returning('*'),
+  };
+};
