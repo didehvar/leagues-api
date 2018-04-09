@@ -8,14 +8,20 @@ export const get: Middleware = async (ctx, next) => {
   const { id } = ctx.params;
   const league = await League.query().findById(id);
 
-  console.log(league);
   if (!league) throw new createError.NotFound();
 
   ctx.body = { data: await league.$loadRelated('[rounds, participants]') };
 };
 
 export const list: Middleware = async (ctx, next) => {
-  ctx.body = { data: await League.query() };
+  const { page, search } = ctx.query;
+
+  let leagues = League.query();
+  if (search) leagues = leagues.where('name', 'like', `%${search}%`);
+
+  ctx.body = {
+    data: await leagues.page(page || 0, 20),
+  };
 };
 
 export const create: Middleware = async (ctx, next) => {
