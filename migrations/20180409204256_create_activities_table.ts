@@ -23,7 +23,7 @@ exports.up = async function(knex: Knex): Promise<any> {
       t.string('end_latlng');
       t.string('location_city');
       t.string('location_state');
-      t.string('location_countr');
+      t.string('location_country');
       t.string('start_latitude');
       t.string('start_longitude');
       t.integer('achievement_count');
