@@ -33,6 +33,8 @@ export default function(app: Koa) {
   router.get('/leagues', leagues.list);
   router.get('/leagues/:id', leagues.get);
 
+  router.post('/webhook', webhooks.create);
+
   router.post('/auth/strava/exchange', exchange);
 
   router.use(jwt({ secret: <string>process.env.JWT_SECRET }));
@@ -45,8 +47,6 @@ export default function(app: Koa) {
   router.post('/leagues/:id/rounds', createRound);
   router.get('/leagues/:id/join', leagues.join);
   router.get('/leagues/:id/leave', leagues.leave);
-
-  router.post('/webhook', webhooks.create);
 
   app.use(router.routes());
   app.use(router.allowedMethods());

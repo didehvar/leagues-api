@@ -10,6 +10,7 @@ export default class Webhook extends BaseModel {
   public object_type: string;
   public owner_id: string;
   public subscription_id: number;
+  public updates: object;
   public createdAt: string;
   public updatedAt: string;
 

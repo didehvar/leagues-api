@@ -1,7 +1,7 @@
 import { Middleware } from 'koa';
 import * as createError from 'http-errors';
 
-import League from '../models/webhook';
+import Webhook from '../models/webhook';
 
 export const create: Middleware = async (ctx, next) => {
   const {
