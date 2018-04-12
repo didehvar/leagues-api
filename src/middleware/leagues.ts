@@ -14,13 +14,21 @@ export const get: Middleware = async (ctx, next) => {
 };
 
 export const list: Middleware = async (ctx, next) => {
-  const { page, search } = ctx.query;
+  const { page, search, startIndex, stopIndex } = ctx.query;
 
   let leagues = League.query();
   if (search) leagues = leagues.where('name', 'like', `%${search}%`);
 
+  let data;
+
+  if (startIndex && stopIndex) {
+    data = await leagues.range(startIndex, stopIndex);
+  } else {
+    data = await leagues.page(page || 0, 20);
+  }
+
   ctx.body = {
-    data: await leagues.page(page || 0, 20),
+    data,
   };
 };
 
