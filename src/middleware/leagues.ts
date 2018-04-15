@@ -10,13 +10,15 @@ export const get: Middleware = async (ctx, next) => {
 
   if (!league) throw new createError.NotFound();
 
-  ctx.body = { data: await league.$loadRelated('[rounds, participants]') };
+  ctx.body = {
+    data: await league.$loadRelated('[rounds, participants, discipline]'),
+  };
 };
 
 export const list: Middleware = async (ctx, next) => {
   const { page, search, startIndex, stopIndex } = ctx.query;
 
-  let leagues = League.query();
+  let leagues = League.query().eager('discipline');
   if (search) leagues = leagues.where('name', 'like', `%${search}%`);
 
   let data;
@@ -27,9 +29,7 @@ export const list: Middleware = async (ctx, next) => {
     data = await leagues.page(page || 0, 20);
   }
 
-  ctx.body = {
-    data,
-  };
+  ctx.body = { data };
 };
 
 export const create: Middleware = async (ctx, next) => {
@@ -53,7 +53,7 @@ export const create: Middleware = async (ctx, next) => {
   await league.$relatedQuery('participants').relate(ctx.state.user.id);
 
   ctx.body = {
-    data: league,
+    data: await league.$loadRelated('discipline'),
   };
 };
 
