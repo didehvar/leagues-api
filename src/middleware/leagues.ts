@@ -23,7 +23,7 @@ export const list: Middleware = async (ctx, next) => {
   const { page, search, startIndex, stopIndex } = ctx.query;
 
   let leagues = League.query().eager(eager);
-  if (search) leagues = leagues.where('name', 'like', `%${search}%`);
+  if (search) leagues = leagues.where('name', 'ilike', `%${search}%`);
 
   let data;
 
