@@ -30,6 +30,7 @@ export const createRound: Middleware = async (ctx, next) => {
   const league = await League.query().findById(leagueId);
 
   if (!league) throw new createError.UnprocessableEntity('League not found');
+  if (league.userId !== ctx.state.user.id) throw new createError.Unauthorized();
 
   let stravaSegment = await StravaSegment.query()
     .select('id', 'name')
@@ -65,6 +66,7 @@ export const deleteRound: Middleware = async (ctx, next) => {
 
   const league = await League.query().findById(id);
   if (!league) throw new createError.UnprocessableEntity('League not found');
+  if (league.userId !== ctx.state.user.id) throw new createError.Unauthorized();
 
   ctx.body = {
     data: await league
