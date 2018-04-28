@@ -3,8 +3,9 @@ import * as createError from 'http-errors';
 
 import League from '../models/league';
 import Discipline from '../models/discipline';
+import LeagueType from '../models/league-type';
 
-const eager = '[rounds, participants, discipline]';
+const eager = '[rounds, participants, discipline, type]';
 
 export const get: Middleware = async (ctx, next) => {
   const { id } = ctx.params;
@@ -37,7 +38,7 @@ export const list: Middleware = async (ctx, next) => {
 };
 
 export const create: Middleware = async (ctx, next) => {
-  const { name, startDate, discipline } = ctx.request.body;
+  const { name, startDate, discipline, type } = ctx.request.body;
 
   const dbDiscipline = await Discipline.query()
     .select('id')
@@ -47,6 +48,14 @@ export const create: Middleware = async (ctx, next) => {
   if (!dbDiscipline || !dbDiscipline.id)
     throw new createError.UnprocessableEntity('Missing discipline id');
 
+  const dbType = await LeagueType.query()
+    .select('id')
+    .where('name', type)
+    .first();
+
+  if (!dbType || !dbType.id)
+    throw new createError.UnprocessableEntity('Missing type id');
+
   const league = await League.query()
     .eager(eager)
     .insert({
@@ -54,6 +63,7 @@ export const create: Middleware = async (ctx, next) => {
       name,
       startDate,
       disciplineId: dbDiscipline.id,
+      leagueTypeId: dbType.id,
     });
 
   await league.$relatedQuery('participants').relate(ctx.state.user.id);
