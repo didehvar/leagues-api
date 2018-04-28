@@ -19,7 +19,7 @@ export default class User extends BaseModel {
       },
       <Secret>process.env.JWT_SECRET,
       {
-        expiresIn: '15m',
+        expiresIn: '30 days',
       },
     );
   }
