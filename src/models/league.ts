@@ -10,6 +10,7 @@ export default class League extends BaseModel {
   public startDate: Date;
   public countryCode: string;
   public disciplineId: number;
+  public leagueTypeId: number;
   public createdAt: string;
   public updatedAt: string;
 
@@ -34,6 +35,14 @@ export default class League extends BaseModel {
       join: {
         from: 'leagues.discipline_id',
         to: 'disciplines.id',
+      },
+    },
+    type: {
+      relation: BaseModel.BelongsToOneRelation,
+      modelClass: __dirname + '/league-type',
+      join: {
+        from: 'leagues.league_type_id',
+        to: 'league_types.id',
       },
     },
     rounds: {

@@ -10,7 +10,7 @@ import responseTime from './response-time';
 import { userList } from './users';
 import * as leagues from './leagues';
 import * as webhooks from './webhooks';
-import { createRound } from './rounds';
+import { createRound, deleteRound } from './rounds';
 import { starredSegments } from './strava/segment-finder';
 import { refreshToken } from './auth';
 
@@ -47,6 +47,7 @@ export default function(app: Koa) {
   router.post('/leagues/:id/rounds', createRound);
   router.get('/leagues/:id/join', leagues.join);
   router.get('/leagues/:id/leave', leagues.leave);
+  router.delete('/leagues/:id/rounds/:roundId', deleteRound);
 
   app.use(router.routes());
   app.use(router.allowedMethods());
