@@ -40,8 +40,6 @@ export async function callPage(
     per_page: params.perPage,
   });
 
-  console.log(query);
-
   const res = await fetch(`https://www.strava.com/api/v3/${endpoint}?${query}`);
 
   if (!res.ok) {
@@ -72,8 +70,6 @@ export async function callAllPages(ctx: Context, endpoint: String) {
       page: page++,
       per_page: perPage,
     });
-
-    console.log(query);
 
     const res = await fetch(
       `https://www.strava.com/api/v3/${endpoint}?${query}`,
