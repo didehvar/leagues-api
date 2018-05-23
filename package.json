@@ -6,6 +6,7 @@
   "author": "James Didehvar <james@didehvar.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/bull": "^3.3.10",
     "@types/dotenv": "^4.0.1",
     "@types/http-errors": "^1.6.1",
     "@types/jsonwebtoken": "^7.2.3",
@@ -19,6 +20,7 @@
     "@types/node-fetch": "^1.6.7",
     "@types/pg": "^7.1.4",
     "@types/winston": "^2.3.6",
+    "concurrently": "^3.5.1",
     "husky": "^0.14.3",
     "lint-staged": "^4.2.3",
     "nodemon": "^1.12.1",
@@ -27,8 +29,10 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.77",
+    "bull": "^3.4.1",
     "dotenv": "^4.0.0",
     "http-errors": "^1.6.2",
+    "ioredis": "^3.2.2",
     "jsonwebtoken": "^8.0.1",
     "kcors": "^2.2.1",
     "knex": "^0.13.0",
@@ -44,13 +48,18 @@
     "winston": "^2.4.0"
   },
   "scripts": {
-    "start": "nodemon -x ts-node -r dotenv/config ./src/index.ts",
+    "start": "concurrently \"npm run server\" \"npm run worker\"",
     "precommit": "lint-staged",
     "knex": "knex",
     "migrate": "knex migrate:latest",
-    "postinstall": "npm run migrate && tsc"
+    "postinstall": "npm run migrate && tsc",
+    "server": "nodemon -x ts-node -r dotenv/config ./src/index.ts",
+    "worker": "nodemon -x ts-node -r dotenv/config ./src/worker.ts"
   },
   "lint-staged": {
-    "*.ts": ["prettier --write --single-quote --trailing-comma all", "git add"]
+    "*.ts": [
+      "prettier --write --single-quote --trailing-comma all",
+      "git add"
+    ]
   }
 }
