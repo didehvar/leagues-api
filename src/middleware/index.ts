@@ -9,6 +9,7 @@ import handleErrors from './handle-errors';
 import responseTime from './response-time';
 import { userList } from './users';
 import * as leagues from './leagues';
+import * as webhooks from './webhooks';
 import { createRound, deleteRound } from './rounds';
 import { starredSegments } from './strava/segment-finder';
 import { refreshToken } from './auth';
@@ -31,6 +32,8 @@ export default function(app: Koa) {
 
   router.get('/leagues', leagues.list);
   router.get('/leagues/:id', leagues.get);
+
+  router.post('/webhook', webhooks.create);
 
   router.post('/auth/strava/exchange', exchange);
 

@@ -4,8 +4,7 @@ import fetch from 'node-fetch';
 
 import log from '../log';
 
-export async function call(ctx: Context, endpoint: String) {
-  const token = ctx.state.user.stravaToken;
+export async function call(token: string, endpoint: string) {
   const res = await fetch(
     `https://www.strava.com/api/v3/${endpoint}?access_token=${token}`,
   );
@@ -14,10 +13,19 @@ export async function call(ctx: Context, endpoint: String) {
     log.warn('Strava starred segments call failed', {
       status: res.status,
     });
-    return ctx.throw(500, 'Call to Strava failed');
+    throw new Error('Call to Strava failed');
   }
 
   return await res.json();
+}
+
+export async function callCtx(ctx: Context, endpoint: string) {
+  const token = ctx.state.user.stravaToken;
+  try {
+    return await call(token, endpoint);
+  } catch (ex) {
+    return ctx.throw(500, ex.message);
+  }
 }
 
 interface Parameters {
@@ -27,7 +35,7 @@ interface Parameters {
 
 export async function callPage(
   ctx: Context,
-  endpoint: String,
+  endpoint: string,
   parameters?: Parameters,
 ) {
   const params: Parameters = { ...parameters };
@@ -39,8 +47,6 @@ export async function callPage(
     page: params.page || 1,
     per_page: params.perPage,
   });
-
-  console.log(query);
 
   const res = await fetch(`https://www.strava.com/api/v3/${endpoint}?${query}`);
 
@@ -60,7 +66,7 @@ export async function callPage(
   };
 }
 
-export async function callAllPages(ctx: Context, endpoint: String) {
+export async function callAllPages(ctx: Context, endpoint: string) {
   const perPage = 30;
   let data: any[] = [];
   let segments: any[] = [];
@@ -72,8 +78,6 @@ export async function callAllPages(ctx: Context, endpoint: String) {
       page: page++,
       per_page: perPage,
     });
-
-    console.log(query);
 
     const res = await fetch(
       `https://www.strava.com/api/v3/${endpoint}?${query}`,

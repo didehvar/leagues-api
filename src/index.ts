@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import * as cluster from 'cluster';
 
 import app from './app';
 import log from './log';
@@ -7,7 +8,9 @@ async function index() {
   try {
     const port = process.env.PORT || 3000;
     const server = (await app()).listen(port, () => {
-      log.verbose(`Running at ${server.address().address}${port}`);
+      log.verbose(
+        `Worker ${process.pid} running on ${server.address().address}${port}`,
+      );
     });
 
     const handleExit = () => {
@@ -25,4 +28,16 @@ async function index() {
   }
 }
 
-index();
+if (cluster.isMaster) {
+  log.verbose(`Master ${process.pid} is running`);
+
+  for (let i = 0; i < parseInt(process.env.WEB_CONCURRENCY || '1'); i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker: any) => {
+    log.verbose(`Worker ${worker.process.pid} died`);
+  });
+} else {
+  index();
+}

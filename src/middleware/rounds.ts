@@ -4,7 +4,7 @@ import * as createError from 'http-errors';
 import Round from '../models/round';
 import League from '../models/league';
 import StravaSegment from '../models/strava-segment';
-import { call } from '../utils/strava';
+import { callCtx } from '../utils/strava';
 
 export const getRound: Middleware = async (ctx, next) => {
   const { id, slug } = ctx.params;
@@ -38,7 +38,7 @@ export const createRound: Middleware = async (ctx, next) => {
     .first();
 
   if (!stravaSegment) {
-    const segmentData = await call(ctx, `segments/${segmentId}`);
+    const segmentData = await callCtx(ctx, `segments/${segmentId}`);
     stravaSegment = await StravaSegment.query()
       .insert({
         name: segmentData.name,
