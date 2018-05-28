@@ -31,7 +31,10 @@ const strava = async (job: any) => {
       case 'delete':
         await Activity.query()
           .delete()
-          .where('stravaId', objectId);
+          .where({
+            strava_id: objectId,
+            athlete_id: ownerId,
+          });
         break;
       default:
         throw new Error('Unknown aspect type');
