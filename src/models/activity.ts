@@ -61,7 +61,7 @@ export default class Activity extends BaseModel {
 
   public static jsonSchema = {
     type: 'object',
-    required: ['stravaId', 'raw'],
+    required: ['stravaId', 'athleteId', 'raw'],
 
     properties: {
       stravaId: { type: 'nummber' },

@@ -21,9 +21,12 @@ const strava = async (job: any) => {
         await insert(objectId, ownerId);
         break;
       case 'update':
-        await Activity.query().update(
-          mapKeys(updates, (v, k: string) => camelCase(k)),
-        );
+        await Activity.query()
+          .patch(mapKeys(updates, (v, k: string) => camelCase(k)))
+          .where({
+            strava_id: objectId,
+            athlete_id: ownerId,
+          });
         break;
       case 'delete':
         await Activity.query()
@@ -53,8 +56,8 @@ const insert = async (objectId: any, ownerId: any) => {
     resourceState: activity.resource_state,
     externalId: activity.external_id,
     uploadId: activity.upload_id,
-    athleteId: activity.athlete_id,
-    athleteResourceState: activity.athlete_resource_state,
+    athleteId: activity.athlete.id,
+    athleteResourceState: activity.athlete.resource_state,
     name: activity.name,
     distance: activity.distance,
     movingTime: activity.moving_time,
