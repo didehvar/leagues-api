@@ -1,6 +1,4 @@
 import { mapKeys, camelCase } from 'lodash';
-import * as fs from 'fs';
-import * as util from 'util';
 
 import '../db';
 import log from '../log';
@@ -21,12 +19,7 @@ const strava = async (job: any) => {
         await insert(objectId, ownerId);
         break;
       case 'update':
-        await Activity.query()
-          .patch(mapKeys(updates, (v, k: string) => camelCase(k)))
-          .where({
-            strava_id: objectId,
-            athlete_id: ownerId,
-          });
+        await update(objectId, ownerId, updates);
         break;
       case 'delete':
         await Activity.query()
@@ -110,6 +103,35 @@ const insert = async (objectId: any, ownerId: any) => {
     leaderboardOptOut: activity.leaderboard_opt_out,
     raw: activity,
   });
+};
+
+const update = async (
+  objectId: any,
+  ownerId: any,
+  updates: ArrayLike<object>,
+) => {
+  const activity = await Activity.query().findOne({
+    strava_id: objectId,
+    athlete_id: ownerId,
+  });
+
+  if (!activity)
+    throw new Error(
+      `No activity found for object ${objectId} owner ${ownerId}`,
+    );
+
+  await Activity.query()
+    .patch({
+      ...mapKeys(updates, (v, k: string) => camelCase(k)),
+      raw: {
+        ...activity.raw,
+        ...updates,
+      },
+    })
+    .where({
+      strava_id: objectId,
+      athlete_id: ownerId,
+    });
 };
 
 export default strava;
