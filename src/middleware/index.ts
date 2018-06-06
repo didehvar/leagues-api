@@ -47,6 +47,8 @@ export default function(app: Koa) {
   router.post('/leagues/:id/rounds', createRound);
   router.get('/leagues/:id/join', leagues.join);
   router.get('/leagues/:id/leave', leagues.leave);
+  router.get('/leagues/:id/invite', leagues.invite);
+  router.post('/leagues/:id/use-invite', leagues.useInvite);
   router.delete('/leagues/:id/rounds/:roundId', deleteRound);
 
   app.use(router.routes());
