@@ -24,7 +24,7 @@ export default class League extends BaseModel {
       name: { type: 'string' },
       slug: { type: 'string' },
       startDate: { type: 'string' },
-      countryCode: { type: 'string', max: 2 },
+      countryCode: { type: 'string', max: 2, default: 'gb' },
     },
   };
 
