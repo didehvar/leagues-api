@@ -58,5 +58,13 @@ export default class User extends BaseModel {
         to: 'leagues.id',
       },
     },
+    activities: {
+      relation: BaseModel.HasManyRelation,
+      modelClass: __dirname + '/activity',
+      join: {
+        from: 'users.id',
+        to: 'activities.user_id',
+      },
+    },
   };
 }

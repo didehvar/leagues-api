@@ -6,7 +6,8 @@ import Discipline from '../models/discipline';
 import LeagueType from '../models/league-type';
 import LeagueInvite from '../models/league-invite';
 
-const eager = '[rounds, participants, discipline, type]';
+// todo: this is probably horrendous
+const eager = '[rounds.[points], participants, discipline, type, points]';
 
 export const get: Middleware = async (ctx, next) => {
   const { id } = ctx.params;

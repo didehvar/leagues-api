@@ -1,9 +1,15 @@
+import { ModelOptions, QueryContext } from 'objection';
+
 import BaseModel from './base-model';
+
+import League from './league';
+import Round from './round';
 
 export default class Activity extends BaseModel {
   public static tableName = 'activities';
 
   public readonly id: number;
+  public userId: number;
   public stravaId: number;
   public resourceState: number;
   public externalId: number;
@@ -59,11 +65,14 @@ export default class Activity extends BaseModel {
   public leaderboardOptOut: boolean;
   public raw: object;
 
+  public readonly segmentEfforts: null;
+
   public static jsonSchema = {
     type: 'object',
-    required: ['stravaId', 'athleteId', 'raw'],
+    required: ['userId', 'stravaId', 'athleteId', 'raw'],
 
     properties: {
+      userId: { type: 'number' },
       stravaId: { type: 'nummber' },
       resourceState: { type: 'number' },
       externalId: { type: 'string' },
@@ -109,7 +118,7 @@ export default class Activity extends BaseModel {
       prCount: { type: 'number' },
       totalPhotoCount: { type: 'number' },
       hasKudoed: { type: 'boolean' },
-      workoutType: { type: 'number' },
+      workoutType: { type: ['number', 'null'] },
       description: { type: ['string', 'null'] },
       calories: { type: 'number' },
       partnerBrandTag: { type: ['string', 'null'] },
@@ -118,6 +127,25 @@ export default class Activity extends BaseModel {
       segmentLeaderboardOptOut: { type: 'boolean' },
       leaderboardOptOut: { type: 'boolean' },
       raw: { type: 'object ' },
+    },
+  };
+
+  static relationMappings = {
+    user: {
+      relation: BaseModel.BelongsToOneRelation,
+      modelClass: __dirname + '/user',
+      join: {
+        from: 'activities.user_id',
+        to: 'users.id',
+      },
+    },
+    segmentEfforts: {
+      relation: BaseModel.HasManyRelation,
+      modelClass: __dirname + '/segment-effort',
+      join: {
+        from: 'activities.id',
+        to: 'segment_efforts.activity_id',
+      },
     },
   };
 }

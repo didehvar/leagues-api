@@ -73,6 +73,14 @@ export default class League extends BaseModel {
         to: 'users.id',
       },
     },
+    points: {
+      relation: BaseModel.HasManyRelation,
+      modelClass: __dirname + '/point',
+      join: {
+        from: 'leagues.id',
+        to: 'points.league_id',
+      },
+    },
   };
 
   $beforeInsert() {

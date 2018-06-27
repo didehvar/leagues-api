@@ -23,12 +23,12 @@ export default class StravaSegment extends BaseModel {
   };
 
   static relationMappings = {
-    round: {
+    rounds: {
       relation: BaseModel.HasManyRelation,
       modelClass: __dirname + '/round',
       join: {
         from: 'strava_segments.id',
-        to: 'rounds.id',
+        to: 'rounds.strava_segment_id',
       },
     },
   };

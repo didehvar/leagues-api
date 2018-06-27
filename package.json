@@ -16,6 +16,7 @@
     "@types/koa-bodyparser": "^3.0.25",
     "@types/koa-jwt": "^3.2.1",
     "@types/koa-router": "^7.0.23",
+    "@types/lodash": "^4.14.77",
     "@types/node": "^8.0.33",
     "@types/node-fetch": "^1.6.7",
     "@types/pg": "^7.1.4",
@@ -28,7 +29,6 @@
     "ts-node": "^3.3.0"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.77",
     "bull": "^3.4.1",
     "dotenv": "^4.0.0",
     "http-errors": "^1.6.2",
@@ -42,7 +42,7 @@
     "koa-router": "^7.2.1",
     "lodash": "^4.17.4",
     "node-fetch": "^1.7.3",
-    "objection": "^0.8.9",
+    "objection": "^1.1.10",
     "pg": "^7.3.0",
     "typescript": "^2.5.3",
     "winston": "^2.4.0"

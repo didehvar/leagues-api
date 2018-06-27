@@ -6,9 +6,13 @@ import League from '../models/league';
 import StravaSegment from '../models/strava-segment';
 import { callCtx } from '../utils/strava';
 
+const eager = '[points]';
+
 export const getRound: Middleware = async (ctx, next) => {
   const { id, slug } = ctx.params;
-  const round = await Round.query().findById(id);
+  const round = await Round.query()
+    .findById(id)
+    .eager(eager);
 
   if (!round) throw new createError.NotFound();
 
@@ -21,7 +25,7 @@ export const getRound: Middleware = async (ctx, next) => {
 };
 
 export const roundList: Middleware = async (ctx, next) => {
-  ctx.body = { data: await Round.query() };
+  ctx.body = { data: await Round.query().eager(eager) };
 };
 
 export const createRound: Middleware = async (ctx, next) => {
@@ -50,6 +54,7 @@ export const createRound: Middleware = async (ctx, next) => {
 
   ctx.body = {
     data: await Round.query()
+      .eager(eager)
       .insert({
         name: stravaSegment.name,
         startDate,
