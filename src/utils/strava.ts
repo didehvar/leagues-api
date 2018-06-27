@@ -12,8 +12,9 @@ export async function call(token: string, endpoint: string) {
   if (!res.ok) {
     log.warn('Strava starred segments call failed', {
       status: res.status,
+      statusText: res.statusText,
     });
-    throw new Error('Call to Strava failed');
+    throw new Error(`Call to Strava failed ${res.statusText}`);
   }
 
   return await res.json();

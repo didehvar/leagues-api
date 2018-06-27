@@ -24,7 +24,7 @@ export default class League extends BaseModel {
       name: { type: 'string' },
       slug: { type: 'string' },
       startDate: { type: 'string' },
-      countryCode: { type: 'string', max: 2 },
+      countryCode: { type: 'string', max: 2, default: 'gb' },
     },
   };
 
@@ -71,6 +71,14 @@ export default class League extends BaseModel {
           to: 'leagues_participants.user_id',
         },
         to: 'users.id',
+      },
+    },
+    points: {
+      relation: BaseModel.HasManyRelation,
+      modelClass: __dirname + '/point',
+      join: {
+        from: 'leagues.id',
+        to: 'points.league_id',
       },
     },
   };
