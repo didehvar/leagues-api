@@ -1,8 +1,12 @@
 import { Middleware } from 'koa';
-import * as createError from 'http-errors';
+import fetch from 'node-fetch';
+import * as FormData from 'form-data';
+import { stringify } from 'querystring';
+import log from '../log';
 import { stravaQueue } from '../queues';
 
 import Webhook from '../models/webhook';
+import StravaSubscription from '../models/strava-subscription';
 
 export const create: Middleware = async (ctx, next) => {
   const {
@@ -30,4 +34,56 @@ export const create: Middleware = async (ctx, next) => {
   stravaQueue.add(webhook);
 
   ctx.status = 200;
+};
+
+export const subscribe: Middleware = async (ctx, next) => {
+  if (ctx.query.secret !== process.env.STRAVA_SUBSCRIBE_SECRET) {
+    ctx.status = 404;
+    return;
+  }
+
+  const body = new FormData();
+  body.append('client_id', process.env.STRAVA_CLIENT_ID);
+  body.append('client_secret', process.env.STRAVA_CLIENT_SECRET);
+  body.append('callback_url', ctx.query.callback_url);
+  body.append('verify_token', process.env.STRAVA_VERIFY_TOKEN);
+
+  const res = await fetch('https://api.strava.com/api/v3/push_subscriptions', {
+    method: 'POST',
+    body,
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to create subscription');
+  }
+
+  const {
+    id,
+    callback_url: callbackUrl,
+    created_at: createdAt,
+    updated_at: updatedAt,
+  } = await res.json();
+
+  await StravaSubscription.query().insert({
+    stravaId: id,
+    callbackUrl,
+    createdAt,
+    updatedAt,
+  });
+
+  ctx.status = 200;
+};
+
+export const challenge: Middleware = async (ctx, next) => {
+  const {
+    'hub.mode': hubMode,
+    'hub.verify_token': hubVerifyToken,
+    'hub.challenge': hubChallenge,
+  } = ctx.request.query;
+
+  if (hubVerifyToken !== process.env.STRAVA_VERIFY_TOKEN) {
+    throw new Error('Incorrect verify token');
+  }
+
+  ctx.body = { 'hub.challenge': hubChallenge };
 };

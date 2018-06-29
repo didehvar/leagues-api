@@ -7,7 +7,6 @@ import * as jwt from 'koa-jwt';
 import { exchange } from './strava-auth';
 import handleErrors from './handle-errors';
 import responseTime from './response-time';
-import { userList } from './users';
 import * as leagues from './leagues';
 import * as webhooks from './webhooks';
 import { createRound, deleteRound } from './rounds';
@@ -34,6 +33,8 @@ export default function(app: Koa) {
   router.get('/leagues/:id', leagues.get);
 
   router.post('/webhook', webhooks.create);
+  router.get('/webhook', webhooks.challenge);
+  router.get('/webhook/subscribe', webhooks.subscribe);
 
   router.post('/auth/strava/exchange', exchange);
 
