@@ -45,6 +45,9 @@ export const exchange: Middleware = async ctx => {
         stravaId: athlete.id,
         stravaAccessToken: accessToken,
         stravaRaw: athlete,
+        avatar: athlete.profile,
+        firstname: athlete.firstname,
+        lastname: athlete.lastname,
       })
       .returning('*');
   } else {

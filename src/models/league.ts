@@ -8,6 +8,7 @@ export default class League extends BaseModel {
   public name: string;
   public slug: string;
   public startDate: Date;
+  public endDate: Date;
   public countryCode: string;
   public disciplineId: number;
   public leagueTypeId: number;
@@ -24,6 +25,7 @@ export default class League extends BaseModel {
       name: { type: 'string' },
       slug: { type: 'string' },
       startDate: { type: 'string' },
+      endDate: { type: 'string' },
       countryCode: { type: 'string', max: 2, default: 'gb' },
     },
   };

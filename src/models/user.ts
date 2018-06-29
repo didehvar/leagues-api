@@ -9,6 +9,9 @@ export default class User extends BaseModel {
   public readonly stravaId: number;
   public stravaAccessToken: string;
   public stravaRaw: object;
+  public avatar: string;
+  public firstname: string;
+  public lastname: string;
 
   public jwtToken() {
     return sign(
@@ -34,6 +37,9 @@ export default class User extends BaseModel {
       stravaId: { type: 'number' },
       stravaAccessToken: { type: 'string' },
       stravaRaw: { type: 'object' },
+      avatar: { type: 'string' },
+      firstname: { type: 'string' },
+      lastname: { type: 'string' },
     },
   };
 
