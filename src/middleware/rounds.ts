@@ -1,5 +1,6 @@
 import { Middleware } from 'koa';
 import * as createError from 'http-errors';
+import { isBefore, isAfter } from 'date-fns';
 
 import Round from '../models/round';
 import League from '../models/league';
@@ -30,6 +31,19 @@ export const roundList: Middleware = async (ctx, next) => {
 
 export const createRound: Middleware = async (ctx, next) => {
   const { leagueId, startDate, endDate, segmentId } = ctx.request.body;
+
+  if (isBefore(startDate, new Date()))
+    throw new createError.UnprocessableEntity('Round cannot start in the past');
+
+  if (isBefore(endDate, new Date())) {
+    throw new createError.UnprocessableEntity('Round cannot end in the past');
+  }
+
+  if (!isAfter(startDate, endDate)) {
+    throw new createError.UnprocessableEntity(
+      'Round start date must be after its end date',
+    );
+  }
 
   const league = await League.query().findById(leagueId);
 

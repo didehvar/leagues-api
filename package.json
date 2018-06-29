@@ -8,6 +8,7 @@
   "devDependencies": {
     "@types/bull": "^3.3.10",
     "@types/dotenv": "^4.0.1",
+    "@types/form-data": "^2.2.1",
     "@types/http-errors": "^1.6.1",
     "@types/jsonwebtoken": "^7.2.3",
     "@types/kcors": "^2.2.1",
@@ -29,8 +30,8 @@
     "ts-node": "^3.3.0"
   },
   "dependencies": {
-    "@types/form-data": "^2.2.1",
     "bull": "^3.4.1",
+    "date-fns": "^1.29.0",
     "dotenv": "^4.0.0",
     "form-data": "^2.3.2",
     "http-errors": "^1.6.2",
@@ -59,9 +60,6 @@
     "worker": "nodemon -x ts-node -r dotenv/config ./src/worker.ts"
   },
   "lint-staged": {
-    "*.ts": [
-      "prettier --write --single-quote --trailing-comma all",
-      "git add"
-    ]
+    "*.ts": ["prettier --write --single-quote --trailing-comma all", "git add"]
   }
 }
