@@ -24,14 +24,17 @@ export const get: Middleware = async (ctx, next) => {
 };
 
 export const list: Middleware = async (ctx, next) => {
-  const { page, search, startIndex, stopIndex } = ctx.query;
+  const { page, search, startIndex, stopIndex, userId } = ctx.query;
 
   let leagues = League.query().eager(eager);
   if (search) leagues = leagues.where('name', 'ilike', `%${search}%`);
 
   let data;
 
-  if (startIndex && stopIndex) {
+  if (userId) {
+    const results = await leagues.where('user_id', userId);
+    data = { results, total: results.length };
+  } else if (startIndex && stopIndex) {
     data = await leagues.range(startIndex, stopIndex);
   } else {
     data = await leagues.page(page || 0, 20);
