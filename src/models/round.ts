@@ -1,5 +1,9 @@
 import BaseModel from './base-model';
 import Point from './point';
+import SegmentEffort from './segment-effort';
+import League from './league';
+import User from './user';
+import knex from '../db';
 
 export default class Round extends BaseModel {
   public static tableName = 'rounds';
@@ -70,15 +74,38 @@ export default class Round extends BaseModel {
   }
 
   async calculatePoints() {
-    const efforts: Array<any> = await this.$relatedQuery('segmentEfforts')
-      .column('user_id')
-      .min('elapsed_time as fastest_time')
-      .groupBy('user_id', 'strava_segment_id');
+    let efforts: Array<any> = [];
+    if (this.stravaSegmentId) {
+      // fastest league
+      efforts = await this.$relatedQuery('segmentEfforts')
+        .column('user_id')
+        .min('elapsed_time as fastest_time')
+        .groupBy('user_id', 'strava_segment_id');
+    } else {
+      // distance league
+      const { leagueId } = this;
+      efforts = await SegmentEffort.query()
+        .join('leagues_participants', function() {
+          this.on(
+            'leagues_participants.league_id',
+            knex.raw('?', [leagueId]),
+          ).andOn('leagues_participants.user_id', 'segment_efforts.user_id');
+        })
+        .where('segment_efforts.start_date', '>', this.startDate)
+        .where('segment_efforts.start_date', '<', this.endDate)
+        .column('segment_efforts.user_id')
+        .sum('segment_efforts.distance as total_distance')
+        .groupBy('segment_efforts.user_id');
+
+      console.log('😬😬😬😬😬😬😬😬😬😬😬😬😬😬😬😬', efforts);
+    }
 
     const startDecrement = Math.floor(efforts.length / 5);
 
+    const sort = this.stravaSegmentId ? 'fastestTime' : 'totalDistance';
+
     const points: Array<Point> = efforts
-      .sort((a, b) => a.fastestTime - b.fastestTime)
+      .sort((a, b) => a[sort] - b[sort])
       .slice(0, 25)
       .map(
         ({ userId }, index) =>

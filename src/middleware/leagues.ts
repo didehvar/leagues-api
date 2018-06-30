@@ -1,6 +1,6 @@
 import { Middleware } from 'koa';
 import * as createError from 'http-errors';
-import { isBefore } from 'date-fns';
+import { isBefore, startOfDay } from 'date-fns';
 
 import League from '../models/league';
 import Discipline from '../models/discipline';
@@ -43,7 +43,7 @@ export const list: Middleware = async (ctx, next) => {
 export const create: Middleware = async (ctx, next) => {
   const { name, startDate, discipline, type } = ctx.request.body;
 
-  if (isBefore(startDate, new Date()))
+  if (isBefore(startDate, startOfDay(new Date())))
     throw new createError.UnprocessableEntity(
       'League cannot start in the past',
     );

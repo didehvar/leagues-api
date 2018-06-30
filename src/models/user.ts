@@ -59,7 +59,7 @@ export default class User extends BaseModel {
         from: 'users.id',
         through: {
           from: 'leagues_participants.user_id',
-          to: 'leagues_participants.leagues_id',
+          to: 'leagues_participants.league_id',
         },
         to: 'leagues.id',
       },
@@ -70,6 +70,14 @@ export default class User extends BaseModel {
       join: {
         from: 'users.id',
         to: 'activities.user_id',
+      },
+    },
+    segmentEfforts: {
+      relation: BaseModel.HasManyRelation,
+      modelClass: __dirname + '/segment-effort',
+      join: {
+        from: 'users.id',
+        to: 'segment_efforts.user_id',
       },
     },
   };

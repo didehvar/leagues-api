@@ -1,15 +1,16 @@
 import { mapKeys, camelCase } from 'lodash';
 
-import '../db';
+import knex from '../db';
 import log from '../log';
 
 import Activity from '../models/activity';
 import User from '../models/user';
 import Round from '../models/round';
 import SegmentEffort from '../models/segment-effort';
+import League from '../models/league';
+import StravaSegment from '../models/strava-segment';
 
 import { call } from '../utils/strava';
-import StravaSegment from '../models/strava-segment';
 
 const strava = async (job: any) => {
   try {
@@ -186,23 +187,39 @@ const activityChanged = async (activity: Activity, aspectType: string) => {
     'segmentEfforts',
   );
 
+  const updatedRoundIds: Array<number> = [];
+
+  const updateRounds = async (rounds: Round[]) => {
+    for (const round of rounds) {
+      if (updatedRoundIds.includes(round.id)) continue;
+      await round.calculatePoints();
+      updatedRoundIds.push(round.id);
+    }
+  };
+
   for (const effort of segmentEfforts) {
     const rounds = await effort.$relatedQuery<Round>('rounds');
-
-    for (const round of rounds) {
-      round.calculatePoints();
-    }
+    await updateRounds(rounds);
   }
 
-  // for (const segmentEffort of segmentEfforts) {
-  //   const rounds = await Round.query()
-  //     .joinRelation('segment')
-  //     .where('segment.strava_id', segmentEffort.id);
+  const rounds = await Round.query()
+    .distinct('rounds.*')
+    .join('leagues', 'leagues.id', 'rounds.league_id')
+    .join(
+      'leagues_participants',
+      'leagues_participants.user_id',
+      knex.raw('?', [activity.userId]),
+    )
+    .join('league_types', 'league_types.id', 'leagues.league_type_id')
+    .where('league_types.name', 'distance')
+    .where('rounds.start_date', '<', activity.startDate)
+    .where('rounds.end_date', '>', activity.startDate)
+    .whereNotIn('rounds.id', updatedRoundIds);
 
-  //   rounds.forEach(round => Round.calculatePoints(round as Round));
-  // }
+  console.log('👌🏻🏻🏻🏻🏻🏻🏻🏻🏻🏻🏻🏻🏻', updatedRoundIds);
+  console.log('😭😭😭😭😭😭😭😭😭😭😭😭', rounds);
 
-  // TODO something for distance leagues
+  await updateRounds(rounds);
 };
 
 export default strava;

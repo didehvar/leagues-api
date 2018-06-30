@@ -1,6 +1,6 @@
 import { Middleware } from 'koa';
 import * as createError from 'http-errors';
-import { isBefore, isAfter } from 'date-fns';
+import { isBefore, isAfter, startOfDay } from 'date-fns';
 
 import Round from '../models/round';
 import League from '../models/league';
@@ -30,18 +30,18 @@ export const roundList: Middleware = async (ctx, next) => {
 };
 
 export const createRound: Middleware = async (ctx, next) => {
-  const { leagueId, startDate, endDate, segmentId } = ctx.request.body;
+  const { leagueId, startDate, endDate, segmentId, name } = ctx.request.body;
 
-  if (isBefore(startDate, new Date()))
+  if (isBefore(startDate, startOfDay(new Date())))
     throw new createError.UnprocessableEntity('Round cannot start in the past');
 
-  if (isBefore(endDate, new Date())) {
+  if (isBefore(endDate, startOfDay(new Date()))) {
     throw new createError.UnprocessableEntity('Round cannot end in the past');
   }
 
-  if (!isAfter(startDate, endDate)) {
+  if (isAfter(startDate, endDate)) {
     throw new createError.UnprocessableEntity(
-      'Round start date must be after its end date',
+      'Round start date must be before its end date',
     );
   }
 
@@ -50,31 +50,35 @@ export const createRound: Middleware = async (ctx, next) => {
   if (!league) throw new createError.UnprocessableEntity('League not found');
   if (league.userId !== ctx.state.user.id) throw new createError.Unauthorized();
 
-  let stravaSegment = await StravaSegment.query()
-    .select('id', 'name')
-    .where('strava_id', segmentId)
-    .first();
+  let stravaSegment: StravaSegment | undefined = undefined;
 
-  if (!stravaSegment) {
-    const segmentData = await callCtx(ctx, `segments/${segmentId}`);
+  if (segmentId) {
     stravaSegment = await StravaSegment.query()
-      .insert({
-        name: segmentData.name,
-        stravaId: segmentId,
-        stravaRaw: segmentData,
-      })
-      .returning('*');
+      .select('id', 'name')
+      .where('strava_id', segmentId)
+      .first();
+
+    if (!stravaSegment) {
+      const segmentData = await callCtx(ctx, `segments/${segmentId}`);
+      stravaSegment = await StravaSegment.query()
+        .insert({
+          name: segmentData.name,
+          stravaId: segmentId,
+          stravaRaw: segmentData,
+        })
+        .returning('*');
+    }
   }
 
   ctx.body = {
     data: await Round.query()
       .eager(eager)
       .insert({
-        name: stravaSegment.name,
+        name: (stravaSegment && stravaSegment.name) || name,
         startDate,
         endDate,
         leagueId,
-        stravaSegmentId: stravaSegment.id,
+        stravaSegmentId: stravaSegment && stravaSegment.id,
       })
       .returning('*'),
   };
