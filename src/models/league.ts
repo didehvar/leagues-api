@@ -11,6 +11,7 @@ export default class League extends BaseModel {
   public countryCode: string;
   public disciplineId: number;
   public leagueTypeId: number;
+  public private: boolean;
   public createdAt: string;
   public updatedAt: string;
 
@@ -25,6 +26,7 @@ export default class League extends BaseModel {
       slug: { type: 'string' },
       startDate: { type: 'string' },
       countryCode: { type: 'string', max: 2, default: 'gb' },
+      private: { type: 'boolean' },
     },
   };
 

@@ -14,7 +14,22 @@ import { call } from '../utils/strava';
 
 const strava = async (job: any) => {
   try {
-    const { objectId, objectType, aspectType, ownerId, updates } = job.data;
+    const {
+      allPoints,
+      objectId,
+      objectType,
+      aspectType,
+      ownerId,
+      updates,
+    } = job.data;
+
+    if (allPoints) {
+      const rounds = await Round.query();
+      for (const round of rounds) {
+        await round.calculatePoints();
+      }
+      return;
+    }
 
     if (objectType !== 'activity') throw new Error('Unknown object type');
 

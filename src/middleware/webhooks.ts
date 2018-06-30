@@ -96,8 +96,5 @@ export const allPoints: Middleware = async (ctx, next) => {
     return;
   }
 
-  const rounds = await Round.query();
-  for (const round of rounds) {
-    await round.calculatePoints();
-  }
+  stravaQueue.add({ allPoints });
 };
