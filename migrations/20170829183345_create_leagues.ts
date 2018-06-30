@@ -9,7 +9,10 @@ exports.up = async function(knex: Knex): Promise<any> {
       t.index(['name']);
     });
 
-    await knex('disciplines').insert([{ name: 'run' }, { name: 'ride' }]);
+    await knex('disciplines').insert([
+      { id: 1, name: 'run' },
+      { id: 2, name: 'ride' },
+    ]);
 
     await knex.schema.createTable('leagues', t => {
       t.increments();

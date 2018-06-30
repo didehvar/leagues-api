@@ -96,8 +96,6 @@ export default class Round extends BaseModel {
         .column('segment_efforts.user_id')
         .sum('segment_efforts.distance as total_distance')
         .groupBy('segment_efforts.user_id');
-
-      console.log('😬😬😬😬😬😬😬😬😬😬😬😬😬😬😬😬', efforts);
     }
 
     const startDecrement = Math.floor(efforts.length / 5);

@@ -7,6 +7,7 @@ import { stravaQueue } from '../queues';
 
 import Webhook from '../models/webhook';
 import StravaSubscription from '../models/strava-subscription';
+import Round from '../models/round';
 
 export const create: Middleware = async (ctx, next) => {
   const {
@@ -86,4 +87,17 @@ export const challenge: Middleware = async (ctx, next) => {
   }
 
   ctx.body = { 'hub.challenge': hubChallenge };
+};
+
+// todo : delete this
+export const allPoints: Middleware = async (ctx, next) => {
+  if (ctx.query.secret !== process.env.STRAVA_SUBSCRIBE_SECRET) {
+    ctx.status = 404;
+    return;
+  }
+
+  const rounds = await Round.query();
+  for (const round of rounds) {
+    await round.calculatePoints();
+  }
 };

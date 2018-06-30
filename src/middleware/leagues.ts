@@ -26,7 +26,9 @@ export const get: Middleware = async (ctx, next) => {
 export const list: Middleware = async (ctx, next) => {
   const { page, search, startIndex, stopIndex, userId } = ctx.query;
 
-  let leagues = League.query().eager(eager);
+  let leagues = League.query()
+    .eager(eager)
+    .orderBy('start_date', 'desc');
   if (search) leagues = leagues.where('name', 'ilike', `%${search}%`);
 
   let data;

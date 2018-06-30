@@ -38,6 +38,9 @@ export default function(app: Koa) {
 
   router.post('/auth/strava/exchange', exchange);
 
+  // todo delete
+  router.get('/admin/all-points', webhooks.allPoints);
+
   router.use(jwt({ secret: <string>process.env.JWT_SECRET }));
 
   router.get('/auth/token/refresh', refreshToken);
