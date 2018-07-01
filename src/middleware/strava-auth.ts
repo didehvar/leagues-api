@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 
 import log from '../log';
 import User from '../models/user';
+import { stravaActivitiesQueue } from '../queues';
 
 export const exchange: Middleware = async ctx => {
   const { code } = ctx.request.body;
@@ -50,6 +51,8 @@ export const exchange: Middleware = async ctx => {
         lastname: athlete.lastname,
       })
       .returning('*');
+
+    stravaActivitiesQueue.add(user);
   } else {
     user = await User.query().patchAndFetchById(user.id, {
       stravaAccessToken: accessToken,

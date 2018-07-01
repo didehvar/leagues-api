@@ -18,3 +18,7 @@ const options = {
 };
 
 export const stravaQueue = new Queue('strava webhooks', options);
+export const stravaActivitiesQueue = new Queue(
+  'strava segment activities',
+  options,
+);
