@@ -57,7 +57,9 @@
     "migrate": "knex migrate:latest",
     "postinstall": "npm run migrate && tsc",
     "server": "nodemon -x ts-node -r dotenv/config ./src/index.ts",
-    "worker": "nodemon -x ts-node -r dotenv/config ./src/worker.ts"
+    "worker": "nodemon -x ts-node -r dotenv/config ./src/worker.ts",
+    "migration":
+      "ts-node -r dotenv/config ./migration/index.ts --max-old-space-size=4096"
   },
   "lint-staged": {
     "*.ts": ["prettier --write --single-quote --trailing-comma all", "git add"]
