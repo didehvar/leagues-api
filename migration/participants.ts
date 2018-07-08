@@ -6,8 +6,14 @@ import { slugify, impenduloDiscipline } from './helpers';
 const participants = async (impenduloPool: Pool, slPool: Pool) => {
   const client = await impenduloPool.connect();
 
-  const { rows } = await slPool.query(
-    'select user_id, league_id from participants',
+  const {
+    rows,
+  } = await slPool.query(
+    `select user_id, league_id from participants p
+    join users u on u.id = p.user_id
+    where u.created_at > $1
+    `,
+    [config.FROM_DATE],
   );
 
   try {

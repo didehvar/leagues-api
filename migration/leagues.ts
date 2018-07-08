@@ -6,12 +6,16 @@ import { slugify, impenduloDiscipline } from './helpers';
 const leagues = async (impenduloPool: Pool, slPool: Pool) => {
   const client = await impenduloPool.connect();
 
-  const { rows } = await slPool.query(`
+  const { rows } = await slPool.query(
+    `
     select
       id, name, private, user_id, created_at, updated_at,
       description, discipline, league_type
     from leagues
-  `);
+    where created_at > $1
+  `,
+    [config.FROM_DATE],
+  );
 
   try {
     await client.query('BEGIN');

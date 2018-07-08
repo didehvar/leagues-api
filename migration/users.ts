@@ -5,12 +5,16 @@ import config from './config';
 const users = async (impenduloPool: Pool, slPool: Pool) => {
   const client = await impenduloPool.connect();
 
-  const { rows } = await slPool.query(`
+  const { rows } = await slPool.query(
+    `
     select
       id, email, uid, access_token,
       profile, first_name, last_name
     from users
-  `);
+    where created_at > $1
+  `,
+    [config.FROM_DATE],
+  );
 
   try {
     await client.query('BEGIN');

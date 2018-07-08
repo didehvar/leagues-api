@@ -6,17 +6,25 @@ import { slugify, impenduloDiscipline } from './helpers';
 const rounds = async (impenduloPool: Pool, slPool: Pool) => {
   const client = await impenduloPool.connect();
 
-  const { rows } = await slPool.query(`
+  const { rows } = await slPool.query(
+    `
     select
       id, league_id, created_at, updated_at, start, "end", name
     from rounds
-  `);
+    where created_at > $1
+  `,
+    [config.FROM_DATE],
+  );
 
-  const { rows: segments } = await slPool.query(`
+  const { rows: segments } = await slPool.query(
+    `
     select
       strava_id, created_at, updated_at, round_id, segment_data
     from segments
-  `);
+    where created_at > $1
+  `,
+    [config.FROM_DATE],
+  );
 
   try {
     await client.query('BEGIN');

@@ -11,11 +11,14 @@ const MS_BETWEEN_REQUESTS = 2000;
 const activities = async (impenduloPool: Pool, slPool: Pool) => {
   const client = await impenduloPool.connect();
 
-  const { rows } = await impenduloPool.query(`
+  const { rows } = await impenduloPool.query(
+    `
     select
       id, strava_access_token
     from users
-  `);
+    where id > 99627
+    `,
+  );
 
   try {
     await client.query('BEGIN');
