@@ -57,13 +57,48 @@ export const stravaActivities = async (token: string, queryParams: object) => {
 
     throw new StravaCallError(
       res.status,
-      `Call to Strava failed ${res.statusText}`,
+      `Call to Strava activities failed ${res.statusText}`,
     );
   }
 
   const data = await res.json();
 
-  console.log('🎉 ', format(new Date(), 'HH:mm:ss'), 'Strava call succeeded');
+  console.log('🎉 ', format(new Date()), 'Strava activities call succeeded');
+
+  return data;
+};
+
+export const stravaActivity = async (token: string, activityId: number) => {
+  const query = stringify({
+    access_token: token,
+    include_all_efforts: '',
+  });
+
+  const res = await fetch(
+    `https://www.strava.com/api/v3/activities/${activityId}?${query}`,
+  );
+
+  if (!res.ok) {
+    console.error(
+      '🕷 ',
+      'Request failed',
+      JSON.stringify({
+        status: res.status,
+        statustext: res.statusText,
+        token,
+        query,
+      }),
+    );
+
+    throw new StravaCallError(
+      res.status,
+      `Call to Strava activity failed ${res.statusText}`,
+    );
+  }
+
+  const data = await res.json();
+
+  console.log('🎉 ', format(new Date()), 'Strava activity call succeeded');
 
   return data;
 };

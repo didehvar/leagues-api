@@ -26,7 +26,14 @@ const activities = async (job: any) => {
 
       page = (activities || []).length === PER_PAGE ? page + 1 : 0;
 
-      for (const activity of activities) {
+      for (const rawActivity of activities) {
+        const activity = await call(
+          user.stravaAccessToken,
+          `activities/${rawActivity.id}`,
+          {
+            include_all_efforts: '',
+          },
+        );
         await createActivity(user.id, activity);
       }
     }

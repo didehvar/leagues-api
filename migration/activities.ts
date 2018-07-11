@@ -1,7 +1,12 @@
 import { Pool } from 'pg';
 import { chunk, last } from 'lodash';
 import config from './config';
-import { slugify, impenduloDiscipline, stravaActivities } from './helpers';
+import {
+  slugify,
+  impenduloDiscipline,
+  stravaActivities,
+  stravaActivity,
+} from './helpers';
 import { isAfter, format, differenceInMilliseconds } from 'date-fns';
 
 import { createActivity } from '../src/utils/strava';
@@ -16,7 +21,6 @@ const activities = async (impenduloPool: Pool, slPool: Pool) => {
     select
       id, strava_access_token
     from users
-    where id > 99627
     `,
   );
 
@@ -48,7 +52,7 @@ const activities = async (impenduloPool: Pool, slPool: Pool) => {
                 activities = await stravaActivities(strava_access_token, {
                   page,
                   per_page: 100,
-                  after: format(new Date('2018-01-01'), 'X'),
+                  after: format(new Date('2018-07-01'), 'X'),
                 });
 
                 lastCall = new Date();
@@ -69,7 +73,11 @@ const activities = async (impenduloPool: Pool, slPool: Pool) => {
             if (!activities) break;
             if (activities.length !== 100) page = 0;
 
-            for (const activity of activities) {
+            for (const rawActivity of activities) {
+              const activity = await stravaActivity(
+                strava_access_token,
+                rawActivity.id,
+              );
               await createActivity(id, activity);
             }
           }

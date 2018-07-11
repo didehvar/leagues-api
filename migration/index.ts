@@ -18,7 +18,6 @@ const start = async () => {
 
   const impenduloPool = new Pool({
     connectionString: process.env.IMPENDULO_DB,
-    ssl: true,
   });
 
   const slPool = new Pool({
@@ -27,9 +26,9 @@ const start = async () => {
   });
 
   try {
-    // await impenduloPool.query('delete from segment_efforts');
+    await impenduloPool.query('delete from segment_efforts');
     // await impenduloPool.query('delete from webhooks');
-    // await impenduloPool.query('delete from activities');
+    await impenduloPool.query('delete from activities');
     // await impenduloPool.query('delete from league_invites');
     // await impenduloPool.query('delete from leagues_participants');
     // await impenduloPool.query('delete from points');
