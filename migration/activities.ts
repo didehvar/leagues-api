@@ -74,10 +74,26 @@ const activities = async (impenduloPool: Pool, slPool: Pool) => {
             if (activities.length !== 100) page = 0;
 
             for (const rawActivity of activities) {
-              const activity = await stravaActivity(
-                strava_access_token,
-                rawActivity.id,
-              );
+              let activity;
+              while (!activity) {
+                try {
+                  activity = await stravaActivity(
+                    strava_access_token,
+                    rawActivity.id,
+                  );
+                } catch (e) {
+                  if (e.status === 401 || e.status === 404) break;
+
+                  console.error(
+                    '⏰ ',
+                    format(new Date(), 'HH:mm:ss'),
+                    e.status,
+                    'Activity called failed',
+                    e.message,
+                  );
+                }
+              }
+              if (!activity) break;
               await createActivity(id, activity);
             }
           }
