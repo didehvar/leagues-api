@@ -12,6 +12,7 @@ import * as webhooks from './webhooks';
 import { createRound, deleteRound } from './rounds';
 import { starredSegments } from './strava/segment-finder';
 import { refreshToken } from './auth';
+import v11Router from './1.1';
 
 export default function(app: Koa) {
   const router = new Router();
@@ -26,6 +27,9 @@ export default function(app: Koa) {
 
   app.use(handleErrors);
   app.use(responseTime);
+
+  app.use(v11Router.routes());
+  app.use(v11Router.allowedMethods());
 
   router.get('/', ctx => (ctx.body = 'Hello'));
 

@@ -5,6 +5,7 @@ import { BodyError, BodyMessage } from '../types/body';
 const handleErrors: Middleware = async (ctx, next) => {
   try {
     await next();
+    if ((!ctx.status || ctx.status === 404) && !ctx.body) ctx.throw(404);
   } catch (err) {
     const body: BodyError = { message: BodyMessage.Unknown, error: true };
 
