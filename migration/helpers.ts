@@ -98,7 +98,12 @@ export const stravaActivity = async (token: string, activityId: number) => {
 
   const data = await res.json();
 
-  console.log('🎉 ', format(new Date()), 'Strava activity call succeeded');
+  console.log(
+    '🎉 ',
+    format(new Date()),
+    'Strava activity call succeeded',
+    activityId,
+  );
 
   return data;
 };

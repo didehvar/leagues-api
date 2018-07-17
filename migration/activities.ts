@@ -20,9 +20,16 @@ const activities = async (impenduloPool: Pool, slPool: Pool) => {
     `
     select
       id, strava_access_token
-    from users
+    from users u
+    where not exists (
+      select a.id from activities a where u.id = a.user_id
+      and a.start_date < '2018-06-01'
+    )
     `,
   );
+
+  // where not exists ( select a.id from activities a where u.id = a.user_id )
+  // check activity dates
 
   try {
     await client.query('BEGIN');
@@ -52,12 +59,17 @@ const activities = async (impenduloPool: Pool, slPool: Pool) => {
                 activities = await stravaActivities(strava_access_token, {
                   page,
                   per_page: 100,
-                  after: format(new Date('2018-07-01'), 'X'),
+                  before: format(new Date('2018-06-01'), 'X'),
+                  after: format(new Date('2018-05-01'), 'X'),
                 });
 
                 lastCall = new Date();
               } catch (e) {
                 if (e.status === 401 || e.status === 404) break;
+                if (e.status === 403)
+                  await new Promise(resolve =>
+                    setTimeout(resolve, 1000 * 60 * 5),
+                  );
 
                 console.error(
                   '⏰ ',
