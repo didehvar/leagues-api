@@ -14,3 +14,18 @@ export const leagues: Middleware = async ctx => {
       .range(startIndex, stopIndex),
   };
 };
+
+export const league: Middleware = async ctx => {
+  const { id } = ctx.params;
+  const league = await League.query()
+    .eager('[rounds.[points], participants, discipline, type, points]')
+    .findById(id);
+
+  if (!league) {
+    return ctx.throw(404);
+  }
+
+  ctx.body = {
+    data: league,
+  };
+};
