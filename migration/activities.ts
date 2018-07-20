@@ -66,10 +66,12 @@ const activities = async (impenduloPool: Pool, slPool: Pool) => {
                 lastCall = new Date();
               } catch (e) {
                 if (e.status === 401 || e.status === 404) break;
-                if (e.status === 403)
+                if (e.status === 403 || e.status === 429) {
+                  console.log('Rate limited', format(new Date(), 'HH:mm:ss'));
                   await new Promise(resolve =>
                     setTimeout(resolve, 1000 * 60 * 5),
                   );
+                }
 
                 console.error(
                   '⏰ ',
