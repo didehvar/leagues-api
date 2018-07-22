@@ -96,6 +96,6 @@ export const allPoints: Middleware = async (ctx, next) => {
     return;
   }
 
-  stravaQueue.add({ allPoints });
+  stravaQueue.add({ allPoints: true });
   ctx.status = 200;
 };

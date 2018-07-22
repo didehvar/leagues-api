@@ -7,11 +7,13 @@ import {
   stravaActivities,
   stravaActivity,
 } from './helpers';
-import { isAfter, format, differenceInMilliseconds } from 'date-fns';
+import { isAfter, format, differenceInMilliseconds, subMonths } from 'date-fns';
 
 import { createActivity } from '../src/utils/strava';
 
 const MS_BETWEEN_REQUESTS = 2000;
+
+const dateBefore = '2018-05-01';
 
 const activities = async (impenduloPool: Pool, slPool: Pool) => {
   const client = await impenduloPool.connect();
@@ -23,7 +25,7 @@ const activities = async (impenduloPool: Pool, slPool: Pool) => {
     from users u
     where not exists (
       select a.id from activities a where u.id = a.user_id
-      and a.start_date < '2018-06-01'
+      and a.start_date < '${dateBefore}'
     )
     `,
   );
@@ -34,7 +36,7 @@ const activities = async (impenduloPool: Pool, slPool: Pool) => {
   try {
     await client.query('BEGIN');
 
-    const userGroup = chunk(rows, Math.ceil(rows.length / 3));
+    const userGroup = chunk(rows, Math.ceil(rows.length / 2));
 
     await Promise.all(
       userGroup.map(async users => {
@@ -59,8 +61,8 @@ const activities = async (impenduloPool: Pool, slPool: Pool) => {
                 activities = await stravaActivities(strava_access_token, {
                   page,
                   per_page: 100,
-                  before: format(new Date('2018-06-01'), 'X'),
-                  after: format(new Date('2018-05-01'), 'X'),
+                  before: format(dateBefore, 'X'),
+                  after: format(subMonths(dateBefore, 1), 'X'),
                 });
 
                 lastCall = new Date();

@@ -32,7 +32,8 @@ const strava = async (job: any) => {
       return;
     }
 
-    if (objectType !== 'activity') throw new Error('Unknown object type');
+    if (objectType !== 'activity')
+      throw new Error(`Unknown object type ${objectType}`);
 
     const user = await User.query().findOne({ strava_id: ownerId });
     if (!user) throw new Error(`No user found with ownerId: ${ownerId}`);
