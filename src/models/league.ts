@@ -58,6 +58,7 @@ export default class League extends BaseModel {
     user: {
       relation: BaseModel.BelongsToOneRelation,
       modelClass: __dirname + '/user',
+      filter: (query: any) => query.select('id'),
       join: {
         from: 'leagues.user_id',
         to: 'users.id',
