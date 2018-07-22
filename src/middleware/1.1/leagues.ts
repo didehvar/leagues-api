@@ -11,6 +11,7 @@ export const leagues: Middleware = async ctx => {
       .modify(builder => {
         if (search) builder.where('name', 'ilike', `%${search}%`);
       })
+      .eager('[discipline, type]')
       .range(startIndex, stopIndex),
   };
 };

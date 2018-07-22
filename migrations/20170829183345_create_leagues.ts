@@ -10,8 +10,8 @@ exports.up = async function(knex: Knex): Promise<any> {
     });
 
     await knex('disciplines').insert([
-      { id: 1, name: 'run' },
-      { id: 2, name: 'ride' },
+      { id: 1, name: 'Running' },
+      { id: 2, name: 'Cycling' },
     ]);
 
     await knex.schema.createTable('leagues', t => {
