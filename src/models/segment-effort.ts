@@ -49,6 +49,7 @@ export default class SegmentEffort extends BaseModel {
     user: {
       relation: BaseModel.BelongsToOneRelation,
       modelClass: __dirname + '/user',
+      filter: (query: any) => query.select('id'),
       join: {
         from: 'segment_efforts.user_id',
         to: 'users.id',

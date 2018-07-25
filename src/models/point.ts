@@ -1,4 +1,6 @@
 import BaseModel from './base-model';
+import { QueryBuilder } from 'objection';
+import User from './user';
 
 export default class Point extends BaseModel {
   public static tableName = 'points';
@@ -47,6 +49,8 @@ export default class Point extends BaseModel {
     user: {
       relation: BaseModel.BelongsToOneRelation,
       modelClass: __dirname + '/user',
+      filter: (query: QueryBuilder<User>) =>
+        query.select('id', 'avatar', 'firstname', 'lastname'),
       join: {
         from: 'points.user_id',
         to: 'users.id',

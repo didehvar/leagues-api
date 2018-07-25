@@ -49,13 +49,19 @@ export const strava: Middleware = async ctx => {
     .first();
 
   if (!user) {
+    let avatar = athlete.profile;
+    if (!avatar.startsWith('http')) {
+      avatar =
+        'https://d3nn82uaxijpm6.cloudfront.net/assets/avatar/athlete/large-c24d50e30120b015208ed9d313060f6700d4dc60bebc4bc62371959448d2e66f.png';
+    }
+
     user = await User.query()
       .insert({
         email: athlete.email,
         stravaId: athlete.id,
         stravaAccessToken: accessToken,
         stravaRaw: athlete,
-        avatar: athlete.profile,
+        avatar,
         firstname: athlete.firstname,
         lastname: athlete.lastname,
       })
