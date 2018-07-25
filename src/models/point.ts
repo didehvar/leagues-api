@@ -21,9 +21,9 @@ export default class Point extends BaseModel {
     properties: {
       id: { type: 'integer' },
       points: { type: 'integer' },
-      leagueId: { type: 'number' },
-      roundId: { type: 'number' },
-      userId: { type: 'number' },
+      leagueId: { type: 'integer' },
+      roundId: { type: 'integer' },
+      userId: { type: 'integer' },
     },
   };
 
