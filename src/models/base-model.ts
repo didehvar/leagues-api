@@ -1,5 +1,5 @@
 import { Model } from 'objection';
-import { Dictionary, mapKeys, snakeCase, camelCase } from 'lodash';
+import { mapKeys, snakeCase, camelCase } from 'lodash';
 
 export default class BaseModel extends Model {
   slugify(value: string) {

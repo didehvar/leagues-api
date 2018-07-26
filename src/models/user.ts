@@ -1,17 +1,20 @@
 import BaseModel from './base-model';
 import { sign, Secret } from 'jsonwebtoken';
+import Role from './role';
 
 export default class User extends BaseModel {
   public static tableName = 'users';
 
-  public readonly id: number;
-  public email: string;
-  public readonly stravaId: number;
-  public stravaAccessToken: string;
-  public stravaRaw: object;
-  public avatar: string;
-  public firstname: string;
-  public lastname: string;
+  public readonly id!: number;
+  public email!: string;
+  public readonly stravaId!: number;
+  public stravaAccessToken!: string;
+  public stravaRaw!: object;
+  public avatar!: string;
+  public firstname!: string;
+  public lastname!: string;
+
+  public readonly role?: Role;
 
   public jwtToken() {
     return sign(
@@ -78,6 +81,14 @@ export default class User extends BaseModel {
       join: {
         from: 'users.id',
         to: 'segment_efforts.user_id',
+      },
+    },
+    role: {
+      relation: BaseModel.HasOneRelation,
+      modelClass: __dirname + '/role',
+      join: {
+        from: 'users.role_id',
+        to: 'roles.id',
       },
     },
   };

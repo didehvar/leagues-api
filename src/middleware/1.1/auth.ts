@@ -1,9 +1,9 @@
 import { Middleware } from 'koa';
-import fetch from 'node-fetch';
+import { QueryBuilder } from 'objection';
 
-import log from '../../log';
 import User from '../../models/user';
 import { stravaActivitiesQueue } from '../../queues';
+import { stravaLogin } from '../../services/strava-auth';
 
 export const refreshToken: Middleware = async ctx => {
   const user = await User.query().findById(ctx.state.user.id);
@@ -18,44 +18,30 @@ export const strava: Middleware = async ctx => {
   const { code } = ctx.request.body;
   if (!code) return ctx.throw(400);
 
-  const res = await fetch('https://www.strava.com/oauth/token', {
-    method: 'POST',
-    body: JSON.stringify({
-      client_id: process.env.STRAVA_CLIENT_ID,
-      client_secret: process.env.STRAVA_CLIENT_SECRET,
-      code,
-    }),
-    headers: { 'Content-Type': 'application/json' },
-  });
+  const { accessToken, athlete } = await stravaLogin(ctx, code);
 
-  const {
-    access_token: accessToken,
-    athlete,
-    errors,
-    message,
-  } = await res.json();
-
-  if (!res.ok || !accessToken) {
-    log.warn('Strava token call failed', {
-      status: res.status,
-      errors,
-      message,
-    });
-    return ctx.throw(401, 'Invalid Strava code');
-  }
-
-  let user = await User.query()
+  const user = await User.query()
     .where('strava_id', athlete.id)
     .first();
 
-  if (!user) {
+  let queryBuilder: QueryBuilder<User, User, User>;
+
+  if (user) {
+    queryBuilder = user
+      .$query()
+      .patch({
+        stravaAccessToken: accessToken,
+        stravaRaw: athlete,
+      })
+      .returning('*');
+  } else {
     let avatar = athlete.profile;
     if (!avatar.startsWith('http')) {
       avatar =
         'https://d3nn82uaxijpm6.cloudfront.net/assets/avatar/athlete/large-c24d50e30120b015208ed9d313060f6700d4dc60bebc4bc62371959448d2e66f.png';
     }
 
-    user = await User.query()
+    queryBuilder = User.query()
       .insert({
         email: athlete.email,
         stravaId: athlete.id,
@@ -68,19 +54,17 @@ export const strava: Middleware = async ctx => {
       .returning('*');
 
     stravaActivitiesQueue.add(user);
-  } else {
-    user = await User.query().patchAndFetchById(user.id, {
-      stravaAccessToken: accessToken,
-      stravaRaw: athlete,
-    });
   }
+
+  const updatedUser = await queryBuilder.eager('role');
 
   ctx.body = {
     data: {
       user: {
-        id: user.id,
+        id: updatedUser.id,
+        role: updatedUser.role,
       },
-      token: user.jwtToken(),
+      token: updatedUser.jwtToken(),
     },
   };
 };

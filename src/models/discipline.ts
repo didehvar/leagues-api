@@ -3,8 +3,8 @@ import BaseModel from './base-model';
 export default class Discipline extends BaseModel {
   public static tableName = 'disciplines';
 
-  public readonly id: number;
-  public name: string;
+  public readonly id!: number;
+  public name!: string;
 
   public static jsonSchema = {
     type: 'object',

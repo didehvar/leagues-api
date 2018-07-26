@@ -3,17 +3,17 @@ import BaseModel from './base-model';
 export default class League extends BaseModel {
   public static tableName = 'leagues';
 
-  public readonly id: number;
-  public userId: number;
-  public name: string;
-  public slug: string;
-  public startDate: Date;
-  public countryCode: string;
-  public disciplineId: number;
-  public leagueTypeId: number;
-  public private: boolean;
-  public createdAt: string;
-  public updatedAt: string;
+  public readonly id!: number;
+  public userId!: number;
+  public name!: string;
+  public slug!: string;
+  public startDate!: Date;
+  public countryCode!: string;
+  public disciplineId!: number;
+  public leagueTypeId!: number;
+  public private!: boolean;
+  public createdAt!: string;
+  public updatedAt!: string;
 
   public static jsonSchema = {
     type: 'object',

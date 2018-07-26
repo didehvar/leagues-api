@@ -5,7 +5,7 @@ import User from './user';
 export default class Point extends BaseModel {
   public static tableName = 'points';
 
-  public readonly id: number;
+  public readonly id!: number;
 
   constructor(
     public userId: number,

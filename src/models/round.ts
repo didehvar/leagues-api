@@ -8,15 +8,15 @@ import knex from '../db';
 export default class Round extends BaseModel {
   public static tableName = 'rounds';
 
-  public readonly id: number;
-  public name: string;
-  public slug: string;
-  public startDate: Date;
-  public endDate: Date;
-  public leagueId: number;
-  public stravaSegmentId: number;
-  public created_at: string;
-  public updated_at: string;
+  public readonly id!: number;
+  public name!: string;
+  public slug!: string;
+  public startDate!: Date;
+  public endDate!: Date;
+  public leagueId!: number;
+  public stravaSegmentId?: number;
+  public created_at!: string;
+  public updated_at!: string;
 
   public static jsonSchema = {
     type: 'object',

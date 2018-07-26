@@ -3,16 +3,16 @@ import BaseModel from './base-model';
 export default class SegmentEffort extends BaseModel {
   public static tableName = 'segment_efforts';
 
-  public readonly id: number;
-  public activityId: number;
-  public userId: number;
-  public stravaSegmentId: number;
-  public distance: number;
-  public elapsedTime: number;
-  public startDate: string;
-  public stravaRaw: object | string;
-  public createdAt: string;
-  public updatedAt: string;
+  public readonly id!: number;
+  public activityId!: number;
+  public userId!: number;
+  public stravaSegmentId!: number;
+  public distance?: number;
+  public elapsedTime?: number;
+  public startDate!: string;
+  public stravaRaw!: object | string;
+  public createdAt!: string;
+  public updatedAt!: string;
 
   public static jsonSchema = {
     type: 'object',

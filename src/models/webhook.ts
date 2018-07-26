@@ -3,16 +3,16 @@ import BaseModel from './base-model';
 export default class Webhook extends BaseModel {
   public static tableName = 'webhooks';
 
-  public readonly id: number;
-  public aspectType: string;
-  public eventTime: number;
-  public objectId: number;
-  public objectType: string;
-  public ownerId: string;
-  public subscriptionId: number;
-  public updates: object;
-  public createdAt: string;
-  public updatedAt: string;
+  public readonly id!: number;
+  public aspectType!: string;
+  public eventTime!: number;
+  public objectId!: number;
+  public objectType!: string;
+  public ownerId!: string;
+  public subscriptionId!: number;
+  public updates?: object;
+  public createdAt!: string;
+  public updatedAt!: string;
 
   public static jsonSchema = {
     type: 'object',

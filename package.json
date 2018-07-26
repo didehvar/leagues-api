@@ -26,8 +26,8 @@
     "husky": "^0.14.3",
     "lint-staged": "^4.2.3",
     "nodemon": "^1.12.1",
-    "prettier": "^1.7.4",
-    "ts-node": "^3.3.0"
+    "prettier": "^1.13.7",
+    "ts-node": "^7.0.0"
   },
   "dependencies": {
     "bull": "^3.4.1",
@@ -47,7 +47,7 @@
     "node-fetch": "^1.7.3",
     "objection": "^1.1.10",
     "pg": "^7.3.0",
-    "typescript": "^2.5.3",
+    "typescript": "^2.9.2",
     "winston": "^2.4.0"
   },
   "scripts": {
