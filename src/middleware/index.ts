@@ -28,6 +28,8 @@ export default function(app: Koa) {
   app.use(handleErrors);
   app.use(responseTime);
 
+  app.use(jwt({ secret: <string>process.env.JWT_SECRET, passthrough: true }));
+
   app.use(v11Router.routes());
   app.use(v11Router.allowedMethods());
 
@@ -44,8 +46,6 @@ export default function(app: Koa) {
 
   // todo delete
   router.get('/admin/all-points', webhooks.allPoints);
-
-  router.use(jwt({ secret: <string>process.env.JWT_SECRET }));
 
   router.get('/auth/token/refresh', refreshToken);
 
