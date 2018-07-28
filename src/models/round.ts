@@ -1,9 +1,11 @@
 import BaseModel from './base-model';
+import { QueryBuilder } from 'objection';
 import Point from './point';
 import SegmentEffort from './segment-effort';
 import League from './league';
 import User from './user';
 import knex from '../db';
+import StravaSegment from './strava-segment';
 
 export default class Round extends BaseModel {
   public static tableName = 'rounds';
@@ -45,6 +47,8 @@ export default class Round extends BaseModel {
     segment: {
       relation: BaseModel.BelongsToOneRelation,
       modelClass: __dirname + '/strava-segment',
+      filter: (query: QueryBuilder<StravaSegment>) =>
+        query.select('id', 'name', 'strava_id'),
       join: {
         from: 'rounds.strava_segment_id',
         to: 'strava_segments.id',

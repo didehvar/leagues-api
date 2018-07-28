@@ -22,7 +22,7 @@ export const league: Middleware = async ctx => {
   const { id } = ctx.params;
   const league = await League.query()
     .eager(
-      '[rounds.[points], participants, discipline, type, user, points.[user]]',
+      '[rounds.[points.[user],segment], participants, discipline, type, user, points.[user]]',
     )
     .modifyEager('participants', builder => {
       builder.select('id', 'firstname', 'lastname', 'avatar');
