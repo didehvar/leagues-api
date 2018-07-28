@@ -17,10 +17,6 @@ export default class BaseModel extends Model {
   $beforeInsert() {
     const anyThis = <any>this;
 
-    if (anyThis.hasOwnProperty('createdAt')) {
-      anyThis.createdAt = new Date().toISOString();
-    }
-
     if (
       anyThis.hasOwnProperty('stravaRaw') &&
       typeof anyThis.stravaRaw === 'object'
@@ -31,10 +27,6 @@ export default class BaseModel extends Model {
 
   $beforeUpdate() {
     const anyThis = <any>this;
-
-    if (anyThis.hasOwnProperty('updatedAt')) {
-      anyThis.updatedAt = new Date().toISOString();
-    }
 
     if (
       anyThis.hasOwnProperty('stravaRaw') &&

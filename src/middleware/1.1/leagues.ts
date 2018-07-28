@@ -13,7 +13,7 @@ export const leagues: Middleware = async ctx => {
 
   ctx.body = {
     data: await League.query()
-      .orderBy('start_date', 'desc')
+      .orderBy('created_at', 'desc')
       .modify(builder => {
         if (search) builder.where('name', 'ilike', `%${search}%`);
         if (userId) builder.where('user_id', userId);
