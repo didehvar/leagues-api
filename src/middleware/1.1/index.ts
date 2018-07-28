@@ -4,6 +4,7 @@ import * as Router from 'koa-router';
 import { refreshToken, strava } from './auth';
 import { leagues, league, create } from './leagues';
 import { starred } from './strava';
+import { create as createRound } from './rounds';
 
 const router = new Router({
   prefix: '/1.1',
@@ -20,6 +21,7 @@ router.use((ctx, next) => {
 });
 
 router.post('/leagues/create', create);
+router.post('/rounds/create', createRound);
 router.get('/strava/starred', starred);
 
 export default router;

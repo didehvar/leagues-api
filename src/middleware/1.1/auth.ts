@@ -3,7 +3,7 @@ import { QueryBuilder } from 'objection';
 
 import User from '../../models/user';
 import { stravaActivitiesQueue } from '../../queues';
-import { stravaLogin } from '../../services/strava-auth';
+import { stravaLogin } from '../../services/strava/auth';
 
 export const refreshToken: Middleware = async ctx => {
   const user = await User.query().findById(ctx.state.user.id);

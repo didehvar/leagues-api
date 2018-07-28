@@ -1,7 +1,7 @@
 import { Context } from 'koa';
 import fetch from 'node-fetch';
 
-import log from '../log';
+import log from '../../log';
 
 export const stravaLogin = async (ctx: Context, code: string) => {
   const res = await fetch('https://www.strava.com/oauth/token', {

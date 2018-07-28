@@ -72,6 +72,6 @@ export const create: Middleware = async ctx => {
   await league.$relatedQuery('participants').relate(ctx.state.user.id);
 
   ctx.body = {
-    data: await league,
+    data: league,
   };
 };
