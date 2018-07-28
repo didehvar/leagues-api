@@ -75,3 +75,24 @@ export const create: Middleware = async ctx => {
     data: league,
   };
 };
+
+export const join: Middleware = async ctx => {
+  const league = await League.query().findById(ctx.params.id);
+
+  if (!league) return ctx.throw(404, 'League not found');
+
+  try {
+    const result: any = await league
+      .$relatedQuery('participants')
+      .relate(ctx.state.user.id);
+
+    ctx.body = { data: { leagueId: result.league_id, userId: result.user_id } };
+  } catch (ex) {
+    if (
+      !ex.constraint ||
+      ex.constraint !== 'leagues_participants_league_id_user_id_unique'
+    ) {
+      return ctx.throw(500, ex);
+    }
+  }
+};

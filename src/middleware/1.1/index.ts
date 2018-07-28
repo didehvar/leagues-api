@@ -2,7 +2,7 @@ import { Middleware } from 'koa';
 import * as Router from 'koa-router';
 
 import { refreshToken, strava } from './auth';
-import { leagues, league, create } from './leagues';
+import { leagues, league, create, join } from './leagues';
 import { starred } from './strava';
 import { create as createRound } from './rounds';
 
@@ -20,6 +20,7 @@ router.use((ctx, next) => {
   return next();
 });
 
+router.get('/leagues/:id/join', join);
 router.post('/leagues/create', create);
 router.post('/rounds/create', createRound);
 router.get('/strava/starred', starred);
