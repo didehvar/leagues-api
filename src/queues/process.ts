@@ -10,22 +10,10 @@ stravaActivitiesQueue.process(resolve(__dirname, `strava-activities.ts`));
 
 logger.debug('Queue processer running');
 
-process.once('SIGTERM', () => {
-  logger.debug('Closing all queues before killing worker ...');
+process.on('exit', err => logger.debug('exit event', err));
+process.on('SIGINT', () => logger.debug('SIGINT event'));
+process.on('SIGUSR1', () => logger.debug('SIGUSR1 event'));
+process.on('SIGUSR2', () => logger.debug('SIGUSR2 event'));
+process.on('uncaughtException', err => logger.debug('uncaughtException', err));
 
-  const closePromises: any = [];
-  closePromises.forEach((queue: any) => {
-    closePromises.push(queue.close());
-  });
-
-  Promise.all(closePromises)
-    .then(function() {
-      logger.debug('All queues closed, killing worker');
-      process.exit(0);
-    })
-    .catch(function(err) {
-      logger.debug('Error closing queues, killing worker');
-      logger.error(err);
-      process.exit(0);
-    });
-});
+process.stdin.resume();
