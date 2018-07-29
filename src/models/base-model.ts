@@ -38,11 +38,11 @@ export default class BaseModel extends Model {
 
   $formatDatabaseJson(json: object): object {
     json = super.$formatDatabaseJson(json);
-    return mapKeys<any, string>(json, (value, key) => snakeCase(key));
+    return mapKeys<any>(json, (value, key) => snakeCase(key));
   }
 
   $parseDatabaseJson(json: object): object {
-    json = mapKeys<any, string>(json, (value, key) => camelCase(key));
+    json = mapKeys<any>(json, (value, key) => camelCase(key));
     return super.$parseDatabaseJson(json);
   }
 }
