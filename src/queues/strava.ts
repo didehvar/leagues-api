@@ -171,9 +171,6 @@ const activityChanged = async (activity: Activity, aspectType: string) => {
     .where('rounds.end_date', '>', activity.startDate)
     .whereNotIn('rounds.id', updatedRoundIds);
 
-  console.log('👌🏻🏻🏻🏻🏻🏻🏻🏻🏻🏻🏻🏻🏻', updatedRoundIds);
-  console.log('😭😭😭😭😭😭😭😭😭😭😭😭', rounds);
-
   await updateRounds(rounds);
 };
 
