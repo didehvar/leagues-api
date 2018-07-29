@@ -84,13 +84,18 @@ const update = async (
   user: User,
   updates: ArrayLike<object>,
 ) => {
-  const activity = await Activity.query().findOne({
+  let activity = await Activity.query().findOne({
     strava_id: objectId,
     user_id: user.id,
   });
 
-  if (!activity)
+  if (!activity) {
+    activity = await insert(objectId, user);
+  }
+
+  if (!activity) {
     throw new Error(`No activity found for object ${objectId} user ${user.id}`);
+  }
 
   return (await Activity.query()
     .patch({
