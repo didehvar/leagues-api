@@ -7,8 +7,19 @@ import logger from '../log';
 
 logger.debug('Starting queue processer');
 
-stravaQueue.process(strava);
-stravaActivitiesQueue.process(stravaActivities);
+const errorHandler = (name: string, worker: any) => async (...args: any[]) => {
+  try {
+    await worker(args);
+  } catch (ex) {
+    logger.error(`Failed processing worker, ${name} :`, ex);
+    throw ex;
+  }
+};
+
+stravaQueue.process(errorHandler('strava', strava));
+stravaActivitiesQueue.process(
+  errorHandler('stravaActivities', stravaActivities),
+);
 
 logger.debug('Queue processer running');
 
