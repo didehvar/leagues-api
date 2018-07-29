@@ -153,7 +153,9 @@ const activityChanged = async (activity: Activity, aspectType: string) => {
     await updateRounds(rounds);
   }
 
-  if (!activity.startDate) {
+  const startDate = activity.startDate || (<any>activity).start_date;
+
+  if (!startDate) {
     throw new Error(`No startDate for activity, ${JSON.stringify(activity)}`);
   }
 
@@ -167,8 +169,8 @@ const activityChanged = async (activity: Activity, aspectType: string) => {
     )
     .join('league_types', 'league_types.id', 'leagues.league_type_id')
     .where('league_types.name', 'distance')
-    .where('rounds.start_date', '<', activity.startDate)
-    .where('rounds.end_date', '>', activity.startDate)
+    .where('rounds.start_date', '<', startDate)
+    .where('rounds.end_date', '>', startDate)
     .whereNotIn('rounds.id', updatedRoundIds);
 
   await updateRounds(rounds);
