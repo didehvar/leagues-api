@@ -79,11 +79,7 @@ const insert = async (objectId: any, user: User) => {
   return await createActivity(user.id, activity);
 };
 
-const update = async (
-  objectId: any,
-  user: User,
-  updates: ArrayLike<object>,
-) => {
+const update = async (objectId: any, user: User, updates: object) => {
   let activity = await Activity.query().findOne({
     strava_id: objectId,
     user_id: user.id,
@@ -99,7 +95,16 @@ const update = async (
 
   return (await Activity.query()
     .patch({
-      ...mapKeys(updates, (v, k: string) => camelCase(k)),
+      ...Object.keys(updates).reduce((acc: object, key: string) => {
+        let value: any = (<any>updates)[key];
+
+        if (key === 'private') {
+          value = value ? true : false;
+        }
+
+        (<any>acc)[camelCase(key)] = (<any>updates)[key];
+        return acc;
+      }, {}),
       raw: {
         ...activity.raw,
         ...updates,
