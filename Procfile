@@ -1,2 +1,2 @@
 web: node lib/src/index.js
-worker: node lib/src/worker.js
+worker: forever start lib/src/worker.js
