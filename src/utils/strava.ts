@@ -155,7 +155,7 @@ export async function createActivity(userId: number, activity: any) {
       trainer: activity.trainer,
       commute: activity.commute,
       manual: activity.manual,
-      private: activity.private,
+      private: activity.private ? true : false,
       flagged: activity.flagged,
       gearId: activity.gear_id,
       fromAcceptedTag: activity.from_accepted_tag || undefined,
