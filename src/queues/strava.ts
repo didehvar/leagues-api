@@ -108,7 +108,7 @@ const update = async (
 };
 
 const deleteActivity = async (objectId: any, user: User) =>
-  Activity.query()
+  await Activity.query()
     .delete()
     .where({
       strava_id: objectId,
