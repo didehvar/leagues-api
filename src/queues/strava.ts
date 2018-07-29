@@ -16,6 +16,11 @@ import logger from '../log';
 
 const strava = async (job: any) => {
   try {
+    if (!job.data) {
+      log.error('Strava: Failed to process job', job);
+      return;
+    }
+
     const {
       allPoints,
       objectId,

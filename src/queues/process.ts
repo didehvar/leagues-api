@@ -7,9 +7,9 @@ import logger from '../log';
 
 logger.debug('Starting queue processer');
 
-const errorHandler = (name: string, worker: any) => async (...args: any[]) => {
+const errorHandler = (name: string, worker: any) => async (job: any) => {
   try {
-    await worker(args);
+    await worker(job);
   } catch (ex) {
     logger.error(`Failed processing worker, ${name} :`, ex);
     throw ex;
