@@ -14,7 +14,7 @@ module.exports = {
     connection: process.env.DATABASE_URL,
     pool: {
       min: 2,
-      max: 10,
+      max: 90,
     },
     migrations: {
       tableName: 'knex_migrations',
