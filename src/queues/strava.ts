@@ -62,12 +62,15 @@ const strava = async (job: any) => {
         throw new Error('Unknown aspect type');
     }
 
-    activityChanged(activity, aspectType);
+    if (!activity) {
+      log.error('Activity not set', job.data);
+      return;
+    }
 
-    return Promise.resolve();
+    activityChanged(activity, aspectType);
   } catch (ex) {
     log.error('Error processing Strava activity webhook', ex);
-    return Promise.reject(ex);
+    throw ex;
   }
 };
 
