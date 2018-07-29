@@ -112,15 +112,19 @@ const update = async (
     .returning('*'))[0];
 };
 
-const deleteActivity = async (objectId: any, user: User) =>
-  await Activity.query()
-    .delete()
+const deleteActivity = async (objectId: any, user: User) => {
+  const activity = await Activity.query()
     .where({
       strava_id: objectId,
       user_id: user.id,
     })
     .first()
     .returning('*');
+
+  await activity.$query().delete();
+
+  return activity;
+};
 
 const activityChanged = async (activity: Activity, aspectType: string) => {
   const segmentEfforts = await activity.$relatedQuery<SegmentEffort>(
