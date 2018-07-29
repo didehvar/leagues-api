@@ -13,7 +13,8 @@ import { createActivity } from '../src/utils/strava';
 
 const MS_BETWEEN_REQUESTS = 2000;
 
-const dateBefore = '2018-04-01';
+// const dateBefore = '2018-04-01';
+const dateBefore = '2018-07-01';
 
 const activities = async (impenduloPool: Pool, slPool: Pool) => {
   const client = await impenduloPool.connect();
@@ -23,10 +24,6 @@ const activities = async (impenduloPool: Pool, slPool: Pool) => {
     select
       id, strava_access_token
     from users u
-    where not exists (
-      select a.id from activities a where u.id = a.user_id
-      and a.start_date < '${dateBefore}'
-    )
     `,
   );
 
@@ -61,8 +58,9 @@ const activities = async (impenduloPool: Pool, slPool: Pool) => {
                 activities = await stravaActivities(strava_access_token, {
                   page,
                   per_page: 100,
-                  before: format(dateBefore, 'X'),
-                  after: format(subMonths(dateBefore, 1), 'X'),
+                  // before: format(dateBefore, 'X'),
+                  // after: format(subMonths(dateBefore, 1), 'X'),
+                  after: format(dateBefore, 'X'),
                 });
 
                 lastCall = new Date();
@@ -110,7 +108,16 @@ const activities = async (impenduloPool: Pool, slPool: Pool) => {
                 }
               }
               if (!activity) break;
-              await createActivity(id, activity);
+              try {
+                await createActivity(id, activity);
+              } catch (ex) {
+                if (
+                  !ex.constraint ||
+                  ex.constraint !== 'activities_strava_id_unique'
+                ) {
+                  throw ex;
+                }
+              }
             }
           }
         }
