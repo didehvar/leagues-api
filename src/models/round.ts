@@ -102,7 +102,7 @@ export default class Round extends BaseModel {
         .groupBy('segment_efforts.user_id');
     }
 
-    const startDecrement = Math.floor(efforts.length / 5);
+    let decAmount = Math.floor(efforts.length / 5);
 
     const sort = this.stravaSegmentId ? 'fastestTime' : 'totalDistance';
 
@@ -117,7 +117,7 @@ export default class Round extends BaseModel {
             this.id,
             index === 0
               ? efforts.length
-              : efforts.length - Math.max(startDecrement - index, 1),
+              : Math.max(efforts.length - (decAmount += index), 0),
           ),
       );
 
