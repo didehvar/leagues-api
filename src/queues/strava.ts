@@ -152,6 +152,10 @@ const activityChanged = async (activity: Activity, aspectType: string) => {
     await updateRounds(rounds);
   }
 
+  if (!activity.startDate) {
+    throw new Error(`No startDate for activity, ${JSON.stringify(activity)}`);
+  }
+
   const rounds = await Round.query()
     .distinct('rounds.*')
     .join('leagues', 'leagues.id', 'rounds.league_id')
