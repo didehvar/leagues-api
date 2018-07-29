@@ -12,6 +12,7 @@ import League from '../models/league';
 import StravaSegment from '../models/strava-segment';
 
 import { call } from '../utils/strava';
+import logger from '../log';
 
 const strava = async (job: any) => {
   try {
@@ -23,6 +24,8 @@ const strava = async (job: any) => {
       ownerId,
       updates,
     } = job.data;
+
+    logger.debug('Processing Strava queue', job.data);
 
     if (allPoints) {
       const rounds = await Round.query();
