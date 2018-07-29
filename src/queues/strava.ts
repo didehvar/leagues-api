@@ -68,7 +68,7 @@ const strava = async (job: any) => {
       return;
     }
 
-    activityChanged(activity, aspectType);
+    activityChanged(activity, user);
   } catch (ex) {
     log.error('Error processing Strava activity webhook', ex);
     throw ex;
@@ -132,7 +132,7 @@ const deleteActivity = async (objectId: any, user: User) => {
   return activity;
 };
 
-const activityChanged = async (activity: Activity, aspectType: string) => {
+const activityChanged = async (activity: Activity, user: User) => {
   const segmentEfforts = await SegmentEffort.query().where(
     'activity_id',
     activity.id,
@@ -165,7 +165,7 @@ const activityChanged = async (activity: Activity, aspectType: string) => {
     .join(
       'leagues_participants',
       'leagues_participants.user_id',
-      knex.raw('?', [activity.userId]),
+      knex.raw('?', [activity.userId || user.id]),
     )
     .join('league_types', 'league_types.id', 'leagues.league_type_id')
     .where('league_types.name', 'distance')
