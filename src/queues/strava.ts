@@ -99,7 +99,7 @@ const update = async (objectId: any, user: User, updates: object) => {
       ...Object.keys(updates).reduce((acc: object, key: string) => {
         let value: any = (<any>updates)[key];
 
-        if (key === 'private') {
+        if (key.toLowerCase() === 'private') {
           value = value ? true : false;
         }
 
