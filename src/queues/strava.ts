@@ -35,6 +35,7 @@ const strava = async (job: any) => {
     if (allPoints) {
       const rounds = await Round.query();
       for (const round of rounds) {
+        logger.debug('Waiting: round calculate points', round.id);
         await round.calculatePoints();
       }
       return;
