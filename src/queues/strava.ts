@@ -127,8 +127,9 @@ const deleteActivity = async (objectId: any, user: User) => {
 };
 
 const activityChanged = async (activity: Activity, aspectType: string) => {
-  const segmentEfforts = await activity.$relatedQuery<SegmentEffort>(
-    'segmentEfforts',
+  const segmentEfforts = await SegmentEffort.query().where(
+    'activity_id',
+    activity.id,
   );
 
   const updatedRoundIds: Array<number> = [];
