@@ -24,6 +24,7 @@ const strava = async (job: any) => {
     const {
       allPoints,
       roundId,
+      leagueId,
 
       objectId,
       objectType,
@@ -35,6 +36,14 @@ const strava = async (job: any) => {
     logger.debug('Processing Strava queue', job.data);
 
     if (allPoints) {
+      if (leagueId) {
+        const rounds = await Round.query().where('league_id', leagueId);
+        for (const round of rounds) {
+          await round.calculatePoints();
+        }
+        return;
+      }
+
       if (roundId) {
         const round = await Round.query().findById(roundId);
         if (!round) throw new Error(`Round not found ${roundId}`);

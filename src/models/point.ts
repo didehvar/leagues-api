@@ -12,14 +12,15 @@ export default class Point extends BaseModel {
     public leagueId: number,
     public roundId: number,
     public points: number,
-    public score: string,
+    public distance?: string,
+    public elapsedTime?: string,
   ) {
     super();
   }
 
   public static jsonSchema = {
     type: 'object',
-    required: ['points', 'leagueId', 'userId', 'score'],
+    required: ['points', 'leagueId', 'userId'],
 
     properties: {
       id: { type: 'integer' },
@@ -27,7 +28,8 @@ export default class Point extends BaseModel {
       leagueId: { type: 'integer' },
       roundId: { type: 'integer' },
       userId: { type: 'integer' },
-      score: { type: 'string' },
+      distance: { type: 'number' },
+      elapsedTime: { type: 'number' },
     },
   };
 
