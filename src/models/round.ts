@@ -120,7 +120,7 @@ export default class Round extends BaseModel {
       .sort((a, b) => a[sort] - b[sort])
       .slice(0, 25)
       .map(
-        ({ userId }, index) =>
+        ({ userId, [sort]: score }, index) =>
           new Point(
             userId,
             this.leagueId,
@@ -128,6 +128,7 @@ export default class Round extends BaseModel {
             index === 0
               ? efforts.length
               : Math.max(efforts.length - (decAmount += index), 0),
+            score,
           ),
       );
 

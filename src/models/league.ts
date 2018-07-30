@@ -79,7 +79,6 @@ export default class League extends BaseModel {
     points: {
       relation: BaseModel.HasManyRelation,
       modelClass: __dirname + '/point',
-      filter: (query: any) => query.select('id', 'points'),
       join: {
         from: 'leagues.id',
         to: 'points.league_id',
