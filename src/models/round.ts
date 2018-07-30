@@ -78,16 +78,26 @@ export default class Round extends BaseModel {
   }
 
   async calculatePoints() {
+    const { leagueId } = this;
     let efforts: Array<any> = [];
+
     if (this.stravaSegmentId) {
       // fastest league
-      efforts = await this.$relatedQuery('segmentEfforts')
-        .column('user_id')
-        .min('elapsed_time as fastest_time')
-        .groupBy('user_id', 'strava_segment_id');
+      efforts = await this.$relatedQuery<SegmentEffort>('segment_efforts')
+        .join('leagues_participants', function() {
+          this.on(
+            'leagues_participants.league_id',
+            knex.raw('?', [leagueId]),
+          ).andOn('leagues_participants.user_id', 'segment_efforts.user_id');
+        })
+        .column('segment_efforts.user_id')
+        .min('segment_efforts.elapsed_time as fastest_time')
+        .groupBy(
+          'segment_efforts.user_id',
+          'segment_efforts.strava_segment_id',
+        );
     } else {
       // distance league
-      const { leagueId } = this;
       efforts = await SegmentEffort.query()
         .join('leagues_participants', function() {
           this.on(
