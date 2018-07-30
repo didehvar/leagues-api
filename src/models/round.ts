@@ -83,7 +83,7 @@ export default class Round extends BaseModel {
 
     if (this.stravaSegmentId) {
       // fastest league
-      efforts = await this.$relatedQuery<SegmentEffort>('segment_efforts')
+      efforts = await this.$relatedQuery<SegmentEffort>('segmentEfforts')
         .join('leagues_participants', function() {
           this.on(
             'leagues_participants.league_id',
