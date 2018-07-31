@@ -128,8 +128,8 @@ export default class Round extends BaseModel {
             index === 0
               ? efforts.length
               : Math.max(efforts.length - (decAmount += index), 0),
-            fastestTime,
             totalDistance,
+            fastestTime,
           ),
       );
 
