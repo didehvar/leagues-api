@@ -116,9 +116,6 @@ export default class Round extends BaseModel {
         .groupBy('segment_efforts.user_id');
     }
 
-    const league = this.league;
-    if (!league) throw new Error(`No league found for this round ${this.id}`);
-
     const leagueCount = <any>await League.query()
       .findById(this.leagueId)
       .join('leagues_participants', 'league_id', '=', 'leagues.id')
