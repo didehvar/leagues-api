@@ -90,6 +90,8 @@ export default class Round extends BaseModel {
             knex.raw('?', [leagueId]),
           ).andOn('leagues_participants.user_id', 'segment_efforts.user_id');
         })
+        .where('segment_efforts.start_date', '>', this.startDate)
+        .where('segment_efforts.start_date', '<', this.endDate)
         .column('segment_efforts.user_id')
         .min('segment_efforts.elapsed_time as fastest_time')
         .groupBy(
@@ -125,9 +127,7 @@ export default class Round extends BaseModel {
             userId,
             this.leagueId,
             this.id,
-            index === 0
-              ? efforts.length
-              : Math.max(efforts.length - (decAmount += index), 0),
+            Math.max(efforts.length - decAmount * index - index, 0),
             totalDistance,
             fastestTime,
           ),
