@@ -18,9 +18,22 @@ export const leagues: Middleware = async ctx => {
         if (search) builder.where('name', 'ilike', `%${search}%`);
         if (userId) builder.where('user_id', userId);
         else
-          builder.andWhere(queryBuilder =>
-            queryBuilder.where('private', false).orWhereNull('private'),
-          );
+          builder.andWhere(queryBuilder => {
+            queryBuilder.where('private', false).orWhereNull('private');
+            if (ctx.state.user) {
+              queryBuilder
+                .orWhere('leagues.user_id', ctx.state.user.id)
+                .orWhereExists(function() {
+                  this.select('*')
+                    .from('leagues_participants')
+                    .whereRaw('leagues_participants.league_id = leagues.id')
+                    .andWhere(
+                      'leagues_participants.user_id',
+                      ctx.state.user.id,
+                    );
+                });
+            }
+          });
       })
       .eager('[discipline, type, user]')
       .range(startIndex, stopIndex),
@@ -84,6 +97,8 @@ export const join: Middleware = async ctx => {
   const league = await League.query().findById(ctx.params.id);
 
   if (!league) return ctx.throw(404, 'League not found');
+
+  // TODO: RECALCULATE THE POINTS
 
   try {
     const result: any = await league
