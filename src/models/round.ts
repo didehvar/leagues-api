@@ -119,10 +119,12 @@ export default class Round extends BaseModel {
     const league = this.league;
     if (!league) throw new Error(`No league found for this round ${this.id}`);
 
-    const numParticipants = league.participants
-      ? league.participants.length
-      : 0;
+    const leagueCount = <any>await League.query()
+      .findById(this.leagueId)
+      .join('leagues_participants', 'league_id', '=', 'leagues.id')
+      .count('leagues_participants.user_id as count');
 
+    const numParticipants = leagueCount.count;
     let decAmount = Math.floor(numParticipants / 5);
 
     const sort = this.stravaSegmentId ? 'fastestTime' : 'totalDistance';
