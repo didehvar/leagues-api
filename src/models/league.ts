@@ -1,4 +1,5 @@
 import BaseModel from './base-model';
+import User from './user';
 
 export default class League extends BaseModel {
   public static tableName = 'leagues';
@@ -14,6 +15,8 @@ export default class League extends BaseModel {
   public private!: boolean;
   public createdAt!: string;
   public updatedAt!: string;
+
+  public readonly participants?: Array<User>;
 
   public static jsonSchema = {
     type: 'object',

@@ -20,6 +20,8 @@ export default class Round extends BaseModel {
   public created_at!: string;
   public updated_at!: string;
 
+  public readonly league?: League;
+
   public static jsonSchema = {
     type: 'object',
     required: ['name', 'startDate', 'endDate'],
@@ -114,7 +116,14 @@ export default class Round extends BaseModel {
         .groupBy('segment_efforts.user_id');
     }
 
-    let decAmount = Math.floor(efforts.length / 5);
+    const league = this.league;
+    if (!league) throw new Error(`No league found for this round ${this.id}`);
+
+    const numParticipants = league.participants
+      ? league.participants.length
+      : 0;
+
+    let decAmount = Math.floor(numParticipants / 5);
 
     const sort = this.stravaSegmentId ? 'fastestTime' : 'totalDistance';
 
@@ -127,7 +136,7 @@ export default class Round extends BaseModel {
             userId,
             this.leagueId,
             this.id,
-            Math.max(efforts.length - decAmount * index - index, 0),
+            Math.max(numParticipants - decAmount * index - index, 0),
             totalDistance,
             fastestTime,
           ),
