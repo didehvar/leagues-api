@@ -6,14 +6,26 @@ import { slugify, impenduloDiscipline } from './helpers';
 const rounds = async (impenduloPool: Pool, slPool: Pool) => {
   const client = await impenduloPool.connect();
 
+  const { rows: newRoundsRows } = await impenduloPool.query(
+    `
+    select temp_sl_id as id from rounds
+    `,
+  );
+
+  const { rows: newSegmentsRows } = await impenduloPool.query(
+    `
+    select strava_id as id from strava_segments
+    `,
+  );
+
   const { rows } = await slPool.query(
     `
     select
       id, league_id, created_at, updated_at, start, "end", name
     from rounds
-    where created_at > $1
+    where created_at > $1 and not id = any ($2)
   `,
-    [config.FROM_DATE],
+    [config.FROM_DATE, newRoundsRows.map(r => r.id)],
   );
 
   const { rows: segments } = await slPool.query(
@@ -21,9 +33,9 @@ const rounds = async (impenduloPool: Pool, slPool: Pool) => {
     select
       strava_id, created_at, updated_at, round_id, segment_data
     from segments
-    where created_at > $1
+    where created_at > $1 and not strava_id = any ($2)
   `,
-    [config.FROM_DATE],
+    [config.FROM_DATE, newSegmentsRows.map(r => r.id)],
   );
 
   try {
@@ -59,9 +71,7 @@ const rounds = async (impenduloPool: Pool, slPool: Pool) => {
     const chunks: Array<Array<any>> = chunk(rows, config.CHUNK_AMOUNT);
 
     for (const chunk of chunks) {
-      const {
-        rows: leagues,
-      } = await impenduloPool.query(
+      const { rows: leagues } = await impenduloPool.query(
         'select id, temp_sl_id from leagues where temp_sl_id = any ($1)',
         [chunk.map((l: any) => l.league_id)],
       );

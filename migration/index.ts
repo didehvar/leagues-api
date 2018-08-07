@@ -36,7 +36,6 @@ const start = async () => {
     // await impenduloPool.query('delete from leagues');
     // await impenduloPool.query('delete from users');
     // await impenduloPool.query('delete from strava_segments');
-
     // await users(impenduloPool, slPool);
     // await leagues(impenduloPool, slPool);
     // await participants(impenduloPool, slPool);
@@ -47,6 +46,7 @@ const start = async () => {
   } finally {
     await impenduloPool.end();
     await slPool.end();
+    console.log('Done!');
   }
 };
 

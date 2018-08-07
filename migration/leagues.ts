@@ -6,15 +6,21 @@ import { slugify, impenduloDiscipline } from './helpers';
 const leagues = async (impenduloPool: Pool, slPool: Pool) => {
   const client = await impenduloPool.connect();
 
+  const { rows: newLeagueRows } = await impenduloPool.query(
+    `
+    select temp_sl_id as id from leagues
+    `,
+  );
+
   const { rows } = await slPool.query(
     `
     select
       id, name, private, user_id, created_at, updated_at,
       description, discipline, league_type
     from leagues
-    where created_at > $1
+    where created_at > $1 and not id = any ($2)
   `,
-    [config.FROM_DATE],
+    [config.FROM_DATE, newLeagueRows.map(l => l.id)],
   );
 
   try {
@@ -22,9 +28,7 @@ const leagues = async (impenduloPool: Pool, slPool: Pool) => {
     const chunks: Array<Array<any>> = chunk(rows, config.CHUNK_AMOUNT);
 
     for (const chunk of chunks) {
-      const {
-        rows: users,
-      } = await impenduloPool.query(
+      const { rows: users } = await impenduloPool.query(
         'select id, temp_sl_id from users where temp_sl_id = any ($1)',
         [chunk.map((l: any) => l.user_id)],
       );

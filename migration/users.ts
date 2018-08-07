@@ -5,15 +5,21 @@ import config from './config';
 const users = async (impenduloPool: Pool, slPool: Pool) => {
   const client = await impenduloPool.connect();
 
+  const { rows: newUsersRows } = await impenduloPool.query(
+    `
+    select temp_sl_id as id from users
+    `,
+  );
+
   const { rows } = await slPool.query(
     `
     select
       id, email, uid, access_token,
       profile, first_name, last_name
     from users
-    where created_at > $1
+    where created_at > $1 and not id = any ($2)
   `,
-    [config.FROM_DATE],
+    [config.FROM_DATE, newUsersRows.map(u => u.id)],
   );
 
   try {
