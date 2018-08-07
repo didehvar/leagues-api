@@ -11,16 +11,20 @@ const users = async (impenduloPool: Pool, slPool: Pool) => {
     `,
   );
 
-  const { rows } = await slPool.query(
+  const newIds = newUsersRows.map(l => l.id);
+
+  const { rows: rawRows } = await slPool.query(
     `
     select
       id, email, uid, access_token,
       profile, first_name, last_name
     from users
-    where created_at > $1 and not id = any ($2)
+      where created_at > $1
   `,
-    [config.FROM_DATE, newUsersRows.map(u => u.id)],
+    [config.FROM_DATE],
   );
+
+  const rows = rawRows.filter(old => !newIds.includes(old.id));
 
   try {
     await client.query('BEGIN');

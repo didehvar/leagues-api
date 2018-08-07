@@ -11,31 +11,37 @@ const rounds = async (impenduloPool: Pool, slPool: Pool) => {
     select temp_sl_id as id from rounds
     `,
   );
+  const newRoundIds = newRoundsRows.map(l => l.id);
 
   const { rows: newSegmentsRows } = await impenduloPool.query(
     `
     select strava_id as id from strava_segments
     `,
   );
+  const newSegmentIds = newSegmentsRows.map(l => l.id);
 
-  const { rows } = await slPool.query(
+  const { rows: rawRows } = await slPool.query(
     `
     select
       id, league_id, created_at, updated_at, start, "end", name
     from rounds
-    where created_at > $1 and not id = any ($2)
+    where created_at > $1
   `,
-    [config.FROM_DATE, newRoundsRows.map(r => r.id)],
+    [config.FROM_DATE],
   );
+  const rows = rawRows.filter(old => !newRoundIds.includes(old.id));
 
-  const { rows: segments } = await slPool.query(
+  const { rows: rawSegments } = await slPool.query(
     `
     select
-      strava_id, created_at, updated_at, round_id, segment_data
+    strava_id, created_at, updated_at, round_id, segment_data
     from segments
-    where created_at > $1 and not strava_id = any ($2)
-  `,
-    [config.FROM_DATE, newSegmentsRows.map(r => r.id)],
+    where created_at > $1
+    `,
+    [config.FROM_DATE],
+  );
+  const segments = rawSegments.filter(
+    old => !newSegmentIds.includes(old.strava_id),
   );
 
   try {

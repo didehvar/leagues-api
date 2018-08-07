@@ -11,17 +11,20 @@ const leagues = async (impenduloPool: Pool, slPool: Pool) => {
     select temp_sl_id as id from leagues
     `,
   );
+  const newIds = newLeagueRows.map(l => l.id);
 
-  const { rows } = await slPool.query(
+  const { rows: rawRows } = await slPool.query(
     `
     select
       id, name, private, user_id, created_at, updated_at,
       description, discipline, league_type
     from leagues
-    where created_at > $1 and not id = any ($2)
+      where created_at > $1
   `,
-    [config.FROM_DATE, newLeagueRows.map(l => l.id)],
+    [config.FROM_DATE],
   );
+
+  const rows = rawRows.filter(old => !newIds.includes(old.id));
 
   try {
     await client.query('BEGIN');

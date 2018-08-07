@@ -6,18 +6,26 @@ import { slugify, impenduloDiscipline } from './helpers';
 const participants = async (impenduloPool: Pool, slPool: Pool) => {
   const client = await impenduloPool.connect();
 
-  const { rows: newUsersRows } = await impenduloPool.query(
+  const { rows: participantRows } = await impenduloPool.query(
     `
-    select temp_sl_id as id from users
+      select u.temp_sl_id as user_id, l.temp_sl_id as league_id from leagues_participants p
+      join users u on u.id = p.user_id
+      join leagues l on l.id = p.league_id
     `,
   );
 
-  const { rows } = await slPool.query(
+  const { rows: rawRows } = await slPool.query(
     `select user_id, league_id from participants p
     join users u on u.id = p.user_id
-    where u.created_at > $1 and not u.id = any ($2)
+    where u.created_at > $1
     `,
-    [config.FROM_DATE, newUsersRows.map(u => u.id)],
+    [config.FROM_DATE],
+  );
+  const rows = rawRows.filter(
+    old =>
+      !participantRows.find(
+        pr => pr.user_id === old.user_id && pr.league_id === old.league_id,
+      ),
   );
 
   try {
