@@ -127,7 +127,10 @@ export default class Round extends BaseModel {
     const sort = this.stravaSegmentId ? 'fastestTime' : 'totalDistance';
 
     const points: Array<Point> = efforts
-      .sort((a, b) => a[sort] - b[sort])
+      .sort(
+        (a, b) =>
+          this.stravaSegmentId ? a[sort] - b[sort] : b[sort] - a[sort],
+      )
       .slice(0, 25)
       .map(
         ({ userId, fastestTime, totalDistance }, index) =>
