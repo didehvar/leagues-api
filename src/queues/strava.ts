@@ -120,7 +120,7 @@ const update = async (objectId: any, user: User, updates: object) => {
           value = value ? true : false;
         }
 
-        (<any>acc)[camelCase(key)] = (<any>updates)[key];
+        (<any>acc)[camelCase(key)] = value;
         return acc;
       }, {}),
       raw: {
