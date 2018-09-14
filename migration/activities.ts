@@ -14,8 +14,8 @@ import { createActivity } from '../src/utils/strava';
 const MS_BETWEEN_REQUESTS = 3000;
 
 // const dateBefore = '2018-04-01';
-const dateAfter = '2018-02-01';
-const dateBefore = '2018-03-01';
+const dateAfter = '2018-01-01';
+const dateBefore = '2018-02-01';
 
 const activities = async (impenduloPool: Pool, slPool: Pool) => {
   const client = await impenduloPool.connect();

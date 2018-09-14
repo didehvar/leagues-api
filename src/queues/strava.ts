@@ -62,9 +62,13 @@ const strava = async (job: any) => {
       throw new Error(`Unknown object type ${objectType}`);
 
     const user = await User.query().findOne({ strava_id: ownerId });
-    if (!user) throw new Error(`No user found with ownerId: ${ownerId}`);
+    if (!user) {
+      log.error(`No user found with ownerId: ${ownerId}`);
+      // don't throw as there's no point ever retrying this
+      return;
+    }
 
-    let activity: Activity;
+    let activity: Activity | undefined;
 
     switch (aspectType) {
       case 'create':
@@ -80,12 +84,9 @@ const strava = async (job: any) => {
         throw new Error('Unknown aspect type');
     }
 
-    if (!activity) {
-      log.error('Activity not set', job.data);
-      return;
+    if (activity) {
+      activityChanged(activity, user);
     }
-
-    activityChanged(activity, user);
   } catch (ex) {
     log.error('Error processing Strava activity webhook', ex);
     throw ex;
@@ -93,8 +94,27 @@ const strava = async (job: any) => {
 };
 
 const insert = async (objectId: any, user: User) => {
-  const activity = await call(user.stravaAccessToken, `activities/${objectId}`);
-  return await createActivity(user.id, activity);
+  try {
+    const activity = await call(
+      user.stravaAccessToken,
+      `activities/${objectId}`,
+    );
+
+    return await createActivity(user.id, activity);
+  } catch (ex) {
+    // if we can't find the activity the strava webhook is telling us about...
+    // STRAVA IS CRAZY (or it was deleted, or something sensible)
+    if (ex.message === 'Call to Strava failed Not Found') {
+      return;
+    }
+
+    // if it already exists ignore...
+    if (ex.constraint && ex.constraint === 'activities_strava_id_unique') {
+      return;
+    }
+
+    throw ex;
+  }
 };
 
 const update = async (objectId: any, user: User, updates: object) => {
@@ -141,10 +161,11 @@ const deleteActivity = async (objectId: any, user: User) => {
       strava_id: objectId,
       user_id: user.id,
     })
-    .first()
-    .returning('*');
+    .first();
 
-  await activity.$query().delete();
+  if (activity) {
+    await activity.$query().delete();
+  }
 
   return activity;
 };
