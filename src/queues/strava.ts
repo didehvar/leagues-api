@@ -128,7 +128,9 @@ const update = async (objectId: any, user: User, updates: object) => {
   }
 
   if (!activity) {
-    throw new Error(`No activity found for object ${objectId} user ${user.id}`);
+    // just ignore it
+    log.error(`No activity found for object ${objectId} user ${user.id}`);
+    return;
   }
 
   return (await Activity.query()
