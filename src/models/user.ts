@@ -38,7 +38,7 @@ export default class User extends BaseModel {
       id: { type: 'integer' },
       email: { type: 'string', minLength: 1, maxLength: 254 },
       stravaId: { type: 'number' },
-      stravaAccessToken: { type: 'string' },
+      stravaAccessToken: { type: ['string', 'null'] },
       stravaRaw: { type: 'object' },
       avatar: { type: 'string' },
       firstname: { type: 'string' },
