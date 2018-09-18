@@ -114,6 +114,10 @@ const strava = async (job: any) => {
 
 const insert = async (objectId: any, user: User) => {
   try {
+    if (!user.stravaAccessToken) {
+      throw new Error('User is missing an access token');
+    }
+
     const activity = await call(
       user.stravaAccessToken,
       `activities/${objectId}`,
