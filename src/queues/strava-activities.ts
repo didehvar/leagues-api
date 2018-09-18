@@ -13,6 +13,10 @@ const activities = async (job: any) => {
     const user: User = job.data;
     let page = 1;
 
+    if (!user.stravaAccessToken) {
+      throw new Error('User missing strava access token');
+    }
+
     while (page && page > 0) {
       const activities = await call(
         user.stravaAccessToken,
