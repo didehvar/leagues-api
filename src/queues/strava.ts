@@ -58,13 +58,32 @@ const strava = async (job: any) => {
       return;
     }
 
-    if (objectType !== 'activity')
-      throw new Error(`Unknown object type ${objectType}`);
-
     const user = await User.query().findOne({ strava_id: ownerId });
     if (!user) {
       log.error(`No user found with ownerId: ${ownerId}`);
       // don't throw as there's no point ever retrying this
+      return;
+    }
+
+    if (objectType === 'athlete') {
+      if (updates && updates.authorized === 'false') {
+        await user.$query().update({ stravaAccessToken: undefined });
+        return;
+      }
+
+      log.error('Unknown Strava webhook payload', job);
+      return;
+    }
+
+    if (objectType !== 'activity') {
+      throw new Error(`Unknown object type ${objectType}`);
+    }
+
+    if (!user.stravaAccessToken) {
+      log.debug(
+        `Skipping webhook for ${user.id} due to missing access token`,
+        job,
+      );
       return;
     }
 
