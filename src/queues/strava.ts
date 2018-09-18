@@ -67,7 +67,7 @@ const strava = async (job: any) => {
 
     if (objectType === 'athlete') {
       if (updates && updates.authorized === 'false') {
-        await user.$query().patch({ stravaAccessToken: undefined });
+        await user.$query().patch({ stravaAccessToken: null });
         return;
       }
 

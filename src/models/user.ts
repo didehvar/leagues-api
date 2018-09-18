@@ -8,7 +8,7 @@ export default class User extends BaseModel {
   public readonly id!: number;
   public email!: string;
   public readonly stravaId!: number;
-  public stravaAccessToken!: string;
+  public stravaAccessToken!: string | null;
   public stravaRaw!: object;
   public avatar!: string;
   public firstname!: string;
